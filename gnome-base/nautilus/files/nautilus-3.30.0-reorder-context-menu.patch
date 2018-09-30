@@ -1,0 +1,236 @@
+diff '--exclude=.git' -urN a/src/nautilus-files-view.c b/src/nautilus-files-view.c
+--- a/src/nautilus-files-view.c	2018-09-03 12:31:52.000000000 -0500
++++ b/src/nautilus-files-view.c	2018-09-25 04:02:34.408081464 -0500
+@@ -4947,7 +4947,8 @@
+ static GMenu *
+ build_menu_for_extension_menu_items (NautilusFilesView *view,
+                                      const gchar       *extension_prefix,
+-                                     GList             *menu_items)
++                                     GList             *menu_items,
++                                     char              *category)
+ {
+     GList *l;
+     GMenu *gmenu;
+@@ -4972,35 +4973,38 @@
+                       "name", &name,
+                       NULL);
+ 
+-        escaped_name = g_uri_escape_string (name, NULL, TRUE);
+-        extension_id = g_strdup_printf ("extension_%s_%d_%s",
+-                                        extension_prefix, idx, escaped_name);
+-        add_extension_action (view, item, extension_id);
+-
+-        detailed_action_name = g_strconcat ("view.", extension_id, NULL);
+-        menu_item = g_menu_item_new (label, detailed_action_name);
+-
+-        if (menu != NULL)
+-        {
+-            GList *children;
+-            GMenu *children_menu;
+-
+-            children = nautilus_menu_get_items (menu);
+-            children_menu = build_menu_for_extension_menu_items (view, extension_id, children);
+-            g_menu_item_set_submenu (menu_item, G_MENU_MODEL (children_menu));
+-
+-            nautilus_menu_item_list_free (children);
+-            g_object_unref (children_menu);
++       if (strcmp(category, "extensions") == 0 && strncmp(name, "TerminalNautilus", strlen("TerminalNautilus")) != 0 ||
++           strcmp(category, "terminal-extensions") == 0 && strncmp(name, "TerminalNautilus", strlen("TerminalNautilus")) == 0) {
++            escaped_name = g_uri_escape_string (name, NULL, TRUE);
++            extension_id = g_strdup_printf ("extension_%s_%d_%s",
++                                            extension_prefix, idx, escaped_name);
++            add_extension_action (view, item, extension_id);
++
++            detailed_action_name = g_strconcat ("view.", extension_id, NULL);
++            menu_item = g_menu_item_new (label, detailed_action_name);
++
++            if (menu != NULL) {
++                GList *children;
++                GMenu *children_menu;
++
++                children = nautilus_menu_get_items (menu);
++                children_menu = build_menu_for_extension_menu_items (view, extension_id, children, category);
++                g_menu_item_set_submenu (menu_item, G_MENU_MODEL (children_menu));
++
++                nautilus_menu_item_list_free (children);
++                g_object_unref (children_menu);
++            }
++
++            g_menu_append_item (gmenu, menu_item);
++            idx++;
++
++            g_free (extension_id);
++            g_free (detailed_action_name);
++            g_object_unref (menu_item);
+         }
+ 
+-        g_menu_append_item (gmenu, menu_item);
+-        idx++;
+-
+-        g_free (extension_id);
+-        g_free (detailed_action_name);
+         g_free (name);
+         g_free (label);
+-        g_object_unref (menu_item);
+     }
+ 
+     return gmenu;
+@@ -5012,32 +5016,52 @@
+     NautilusFilesViewPrivate *priv;
+     GList *selection_items, *background_items;
+     g_autoptr (GMenu) background_menu = NULL;
++    g_autoptr (GMenu) background_menu2 = NULL;
+     g_autoptr (GMenu) selection_menu = NULL;
++    g_autoptr (GMenu) selection_menu2 = NULL;
+ 
+     priv = nautilus_files_view_get_instance_private (view);
+     selection_items = get_extension_selection_menu_items (view);
+     if (selection_items != NULL)
+     {
+-        selection_menu = build_menu_for_extension_menu_items (view, "extensions",
+-                                                              selection_items);
++        selection_menu = build_menu_for_extension_menu_items (view, "selection",
++                                                              selection_items, "extensions");
+ 
+         nautilus_gmenu_merge (priv->selection_menu,
+                               selection_menu,
+                               "extensions",
+                               FALSE);
++
++        selection_menu2 = build_menu_for_extension_menu_items (view, "selection",
++                                                               selection_items, "terminal-extensions");
++
++        nautilus_gmenu_merge (priv->selection_menu,
++                              selection_menu2,
++                              "terminal-extensions",
++                              FALSE);
++
+         nautilus_menu_item_list_free (selection_items);
+     }
+ 
+     background_items = get_extension_background_menu_items (view);
+     if (background_items != NULL)
+     {
+-        background_menu = build_menu_for_extension_menu_items (view, "extensions",
+-                                                               background_items);
++        background_menu = build_menu_for_extension_menu_items (view, "background",
++                                                               background_items, "extensions");
+ 
+         nautilus_gmenu_merge (priv->background_menu,
+                               background_menu,
+                               "extensions",
+                               FALSE);
++
++        background_menu2 = build_menu_for_extension_menu_items (view, "background",
++                                                                background_items, "terminal-extensions");
++
++        nautilus_gmenu_merge (priv->background_menu,
++                              background_menu2,
++                              "terminal-extensions",
++                              FALSE);
++
+         nautilus_menu_item_list_free (background_items);
+     }
+ 
+diff '--exclude=.git' -urN a/src/resources/ui/nautilus-files-view-context-menus.ui b/src/resources/ui/nautilus-files-view-context-menus.ui
+--- a/src/resources/ui/nautilus-files-view-context-menus.ui	2018-09-03 12:31:52.000000000 -0500
++++ b/src/resources/ui/nautilus-files-view-context-menus.ui	2018-09-25 13:21:40.960962559 -0500
+@@ -12,10 +12,10 @@
+       <attribute name="hidden-when">action-disabled</attribute>
+     </submenu>
+     <section>
+-      <item>
+-        <attribute name="label" translatable="yes">_Paste</attribute>
+-        <attribute name="action">view.paste</attribute>
+-      </item>
++      <attribute name="id">terminal-extensions</attribute>
++    </section>
++    <section>
++      <attribute name="id">extensions</attribute>
+     </section>
+     <section>
+       <item>
+@@ -32,14 +32,17 @@
+     </section>
+     <section>
+       <item>
++        <attribute name="label" translatable="yes">_Paste</attribute>
++        <attribute name="action">view.paste</attribute>
++      </item>
++    </section>
++    <section>
++      <item>
+         <attribute name="label" translatable="yes">P_roperties</attribute>
+         <attribute name="action">view.current-directory-properties</attribute>
+         <attribute name="hidden-when">action-disabled</attribute>
+       </item>
+     </section>
+-    <section>
+-      <attribute name="id">extensions</attribute>
+-    </section>
+   </menu>
+   <menu id="selection-menu">
+     <section>
+@@ -77,6 +80,7 @@
+         <attribute name="action">view.open-item-new-window</attribute>
+         <attribute name="hidden-when">action-disabled</attribute>
+       </item>
++      <attribute name="id">terminal-extensions</attribute>
+     </section>
+     <section>
+       <item>
+@@ -86,6 +90,9 @@
+       </item>
+     </section>
+     <section>
++      <attribute name="id">extensions</attribute>
++    </section>
++    <section>
+       <attribute name="id">drive-section</attribute>
+       <item>
+         <attribute name="label" translatable="yes">_Mount</attribute>
+@@ -149,6 +156,10 @@
+         <attribute name="label" translatable="yes">Copy to…</attribute>
+         <attribute name="action">view.copy-to</attribute>
+       </item>
++      <item>
++        <attribute name="label" translatable="yes">Rena_me</attribute>
++        <attribute name="action">view.rename</attribute>
++      </item>
+     </section>
+     <section>
+       <item>
+@@ -179,12 +190,6 @@
+     </section>
+     <section>
+       <item>
+-        <attribute name="label" translatable="yes">Rena_me…</attribute>
+-        <attribute name="action">view.rename</attribute>
+-      </item>
+-    </section>
+-    <section>
+-      <item>
+         <attribute name="label" translatable="yes">Set As Wallpaper</attribute>
+         <attribute name="action">view.set-as-wallpaper</attribute>
+         <attribute name="hidden-when">action-disabled</attribute>
+@@ -198,7 +203,6 @@
+       </item>
+     </section>
+     <section>
+-      <attribute name="id">extensions</attribute>
+       <item>
+         <attribute name="label" translatable="yes">_Extract Here</attribute>
+         <attribute name="action">view.extract-here</attribute>
+diff '--exclude=.git' -urN a/src/resources/ui/nautilus-pathbar-context-menu.ui b/src/resources/ui/nautilus-pathbar-context-menu.ui
+--- a/src/resources/ui/nautilus-pathbar-context-menu.ui	2018-09-03 12:31:52.000000000 -0500
++++ b/src/resources/ui/nautilus-pathbar-context-menu.ui	2018-09-25 04:00:42.440604257 -0500
+@@ -17,6 +17,9 @@
+       <attribute name="action">win.bookmark-current-location</attribute>
+     </item>
+     <section>
++      <attribute name="id">terminal-extensions</attribute>
++    </section>
++    <section>
+       <item>
+         <attribute name="label" translatable="yes">_Paste</attribute>
+         <attribute name="action">view.paste</attribute>

@@ -1,0 +1,78 @@
+diff '--exclude=.git' -urN a/gnome-session/gsm-systemd.c b/gnome-session/gsm-systemd.c
+--- a/gnome-session/gsm-systemd.c	2018-09-25 15:50:34.000000000 -0500
++++ b/gnome-session/gsm-systemd.c	2018-09-26 19:39:34.109589093 -0500
+@@ -21,7 +21,7 @@
+ #include "config.h"
+ #include "gsm-systemd.h"
+ 
+-#ifdef HAVE_SYSTEMD
++#if defined(HAVE_ELOGIND) || defined(HAVE_SYSTEMD)
+ 
+ #include <errno.h>
+ #include <string.h>
+@@ -30,7 +30,13 @@
+ #include <sys/types.h>
+ #include <pwd.h>
+ 
++#ifdef HAVE_ELOGIND
++#include <elogind/sd-login.h>
++#endif
++
++#ifdef HAVE_SYSTEMD
+ #include <systemd/sd-login.h>
++#endif
+ 
+ #include <glib.h>
+ #include <glib-object.h>
+diff '--exclude=.git' -urN a/meson.build b/meson.build
+--- a/meson.build	2018-09-25 15:50:34.000000000 -0500
++++ b/meson.build	2018-09-26 19:50:01.184572471 -0500
+@@ -119,12 +119,21 @@
+ # Check for session tracking backend
+ session_tracking = 'null backend'
+ 
++enable_elogind = get_option('elogind')
+ enable_systemd = get_option('systemd')
+ enable_systemd_journal = get_option('systemd_journal')
+ enable_consolekit = get_option('consolekit')
+-if enable_systemd or enable_consolekit
++if enable_elogind or enable_systemd or enable_consolekit
+   session_bin_deps += dependency('gio-unix-2.0', version: glib_req_version)
+ 
++  # Check for elogind
++  if enable_elogind
++    libelogind_dep = dependency('libelogind', version: '>= 209', required: false)
++    session_bin_deps += libelogind_dep
++
++    session_tracking = 'elogind'
++  endif
++
+   # Check for systemd
+   if enable_systemd
+     libsystemd_dep = dependency('libsystemd', version: '>= 209', required: false)
+@@ -154,13 +163,14 @@
+ 
+     session_bin_deps += dbus_glib_dep
+ 
+-    if enable_systemd
++    if enable_elogind or enable_systemd
+       session_tracking += ' (with fallback to ConsoleKit)'
+     else
+       session_tracking = 'ConsoleKit'
+     endif
+   endif
+ endif
++config_h.set('HAVE_ELOGIND', enable_elogind)
+ config_h.set('HAVE_SYSTEMD', enable_systemd)
+ config_h.set('ENABLE_SYSTEMD_JOURNAL', enable_systemd_journal)
+ config_h.set('HAVE_CONSOLEKIT', enable_consolekit)
+diff '--exclude=.git' -urN a/meson_options.txt b/meson_options.txt
+--- a/meson_options.txt	2018-09-25 15:50:34.000000000 -0500
++++ b/meson_options.txt	2018-09-26 19:48:02.432143241 -0500
+@@ -1,5 +1,6 @@
+ option('deprecation_flags', type: 'boolean', value: false, description: 'use *_DISABLE_DEPRECATED flags')
+ option('session_selector', type: 'boolean', value: false, description: 'enable building a custom session selector dialog')
++option('elogind', type: 'boolean', value: true, description: 'Use elogind')
+ option('systemd', type: 'boolean', value: true, description: 'Use systemd')
+ option('systemd_journal', type: 'boolean', value:'true', description: 'Send log to systemd-journal')
+ option('consolekit', type: 'boolean', value: false, description: 'Use consolekit')

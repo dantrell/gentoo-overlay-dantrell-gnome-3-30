@@ -1,0 +1,68 @@
+diff '--exclude=.git' -urN a/panels/datetime/Makefile.am b/panels/datetime/Makefile.am
+--- a/panels/datetime/Makefile.am	2018-09-24 20:36:09.168038852 -0500
++++ b/panels/datetime/Makefile.am	2018-09-24 20:38:02.733510481 -0500
+@@ -23,6 +23,7 @@
+ 	$(DATETIME_PANEL_CFLAGS)			\
+ 	-DGNOMELOCALEDIR="\"$(datadir)/locale\""	\
+ 	-DGNOMECC_DATA_DIR="\"$(pkgdatadir)\""		\
++	-DREALDATADIR="\"$(datadir)\""                  \
+ 	$(NULL)
+ 
+ # test-timezone is still too noisy
+diff '--exclude=.git' -urN a/panels/datetime/tz.h b/panels/datetime/tz.h
+--- a/panels/datetime/tz.h	2018-09-03 10:20:32.000000000 -0500
++++ b/panels/datetime/tz.h	2018-09-24 20:38:02.733510481 -0500
+@@ -28,9 +28,9 @@
+ #include <glib.h>
+ 
+ #ifndef __sun
+-#  define TZ_DATA_FILE "/usr/share/zoneinfo/zone.tab"
++#  define TZ_DATA_FILE REALDATADIR "/zoneinfo/zone.tab"
+ #else
+-#  define TZ_DATA_FILE "/usr/share/lib/zoneinfo/tab/zone_sun.tab"
++#  define TZ_DATA_FILE REALDATADIR "/lib/zoneinfo/tab/zone_sun.tab"
+ #endif
+ 
+ typedef struct _TzDB TzDB;
+diff '--exclude=.git' -urN a/panels/printers/Makefile.am b/panels/printers/Makefile.am
+--- a/panels/printers/Makefile.am	2018-09-24 20:36:09.169038847 -0500
++++ b/panels/printers/Makefile.am	2018-09-24 20:38:02.733510481 -0500
+@@ -10,6 +10,9 @@
+ 	-I$(top_srcdir)/shell/				\
+ 	-DGNOMELOCALEDIR="\"$(datadir)/locale\""	\
+ 	-DTEST_SRCDIR=\""$(srcdir)/"\"			\
++	-DREALDATADIR="\"$(datadir)\""                  \
++	-DPREFIX="\"$(prefix)\""                        \
++	-DLIBEXECDIR="\"$(libexecdir)\""                \
+ 	$(NULL)
+ 
+ noinst_LTLIBRARIES = libprinters.la
+diff '--exclude=.git' -urN a/panels/printers/pp-host.c b/panels/printers/pp-host.c
+--- a/panels/printers/pp-host.c	2018-09-03 10:20:32.000000000 -0500
++++ b/panels/printers/pp-host.c	2018-09-24 20:38:02.733510481 -0500
+@@ -267,7 +267,7 @@
+   data->devices->devices = NULL;
+ 
+   argv = g_new0 (gchar *, 3);
+-  argv[0] = g_strdup ("/usr/lib/cups/backend/snmp");
++  argv[0] = g_strdup (LIBEXECDIR "/cups/backend/snmp");
+   argv[1] = g_strdup (priv->hostname);
+ 
+   /* Use SNMP to get printer's informations */
+diff '--exclude=.git' -urN a/tests/datetime/test-endianess.c b/tests/datetime/test-endianess.c
+--- a/tests/datetime/test-endianess.c	2018-09-03 10:20:32.000000000 -0500
++++ b/tests/datetime/test-endianess.c	2018-09-24 20:38:02.733510481 -0500
+@@ -26,11 +26,11 @@
+ 	g_autoptr(GDir) dir = NULL;
+ 	const char *name;
+ 
+-	dir = g_dir_open ("/usr/share/i18n/locales/", 0, NULL);
++	dir = g_dir_open (REALDATADIR "/i18n/locales/", 0, NULL);
+ 	if (dir == NULL) {
+ 		/* Try with /usr/share/locale/
+ 		 * https://bugzilla.gnome.org/show_bug.cgi?id=646780 */
+-		dir = g_dir_open ("/usr/share/locale/", 0, NULL);
++		dir = g_dir_open (REALDATADIR "/locale/", 0, NULL);
+ 		if (dir == NULL) {
+ 			g_assert_not_reached ();
+ 		}

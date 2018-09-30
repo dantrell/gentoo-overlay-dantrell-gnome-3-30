@@ -1,0 +1,46 @@
+From 8b5ab5d0a5d22d1dcf3962ee6910e88f241d3f14 Mon Sep 17 00:00:00 2001
+From: Sven Eden <yamakuzure@gmx.net>
+Date: Tue, 10 Oct 2017 11:54:22 +0200
+Subject: [PATCH 6/6] Enable support for elogind, substituting systemd-login on
+ demand
+
+Users who wish to use modern systems, but without using systemd as
+their init system, elogind might be installed.
+
+As elogind is "just" systemd-login extracted as a standalone package,
+features that do not depend on more parts of systemd than its session
+tracker can use elogind instead.
+
+This patch enables the usage of elogind when substituting
+systemd-login.
+
+The inner change is minor:
+
+1) monitor/udisks2/gvfsudisks2utils.c
+   Enable get_seat() if either HAVE_LIBSYSTEMD_LOGIN or
+   HAVE_LIBELOGIND is defined.
+
+The main changes are in configure.ac. Here a new option
+--disable-libelogind is introduced.
+If this option is not used, and libsystemd-login is not detected and
+enabled, configure now checks for libelogind and uses that instead.
+---
+ monitor/udisks2/gvfsudisks2utils.c |  2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/monitor/udisks2/gvfsudisks2utils.c b/monitor/udisks2/gvfsudisks2utils.c
+index 26d76b99..78007ea7 100644
+--- a/monitor/udisks2/gvfsudisks2utils.c
++++ b/monitor/udisks2/gvfsudisks2utils.c
+@@ -530,7 +530,7 @@ gvfs_udisks2_utils_spawn_finish (GAsyncResult   *res,
+ 
+ /* ---------------------------------------------------------------------------------------------------- */
+ 
+-#if defined(HAVE_LOGIND)
++#if defined(HAVE_LIBSYSTEMD_LOGIN) || defined(HAVE_LIBELOGIND)
+ #include <systemd/sd-login.h>
+ 
+ static const gchar *
+-- 
+2.17.0
+
