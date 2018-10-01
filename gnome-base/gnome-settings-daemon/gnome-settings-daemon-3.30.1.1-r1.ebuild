@@ -13,7 +13,7 @@ LICENSE="GPL-2+"
 SLOT="0"
 KEYWORDS="*"
 
-IUSE="+cups debug elogind networkmanager policykit smartcard systemd test +udev vanilla-inactivity wayland"
+IUSE="+cups debug elogind policykit smartcard systemd test +udev vanilla-inactivity wayland"
 REQUIRED_USE="
 	?? ( elogind systemd )
 	smartcard? ( udev )
@@ -56,7 +56,7 @@ COMMON_DEPEND="
 	>=x11-libs/pango-1.20
 	x11-drivers/xf86-input-wacom
 	virtual/libgudev:=
-	networkmanager? ( >=net-misc/networkmanager-1.0:= )
+	>=net-misc/networkmanager-1.0:=
 	smartcard? ( >=dev-libs/nss-3.11.2 )
 	udev? ( virtual/libgudev:= )
 	wayland? ( dev-libs/wayland )
@@ -113,7 +113,7 @@ src_configure() {
 		-D alsa=true
 		-D gudev=$(usex udev true false)
 		-D cups=$(usex cups true false)
-		-D network_manager=$(usex networkmanager true false)
+		-D network_manager=true
 		-D rfkill=true
 		-D smartcard=$(usex smartcard true false)
 		-D wayland=$(usex wayland true false)
