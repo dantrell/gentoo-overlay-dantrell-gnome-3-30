@@ -63,7 +63,7 @@ COMMON_DEPEND="
 	i18n? ( >=app-i18n/ibus-1.5.2 )
 	app-crypt/mit-krb5
 	>=gnome-extra/nm-applet-1.2.0
-	>=net-misc/networkmanager-1.2.0:=[modemmanager]
+	>=net-misc/networkmanager-1.10.0:=[modemmanager]
 	>=net-misc/modemmanager-0.7.990
 	v4l? (
 		media-libs/clutter-gtk:1.0[gtk]
