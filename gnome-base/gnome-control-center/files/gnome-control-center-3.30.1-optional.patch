@@ -1,6 +1,6 @@
 diff '--exclude=.git' -urN a/meson.build b/meson.build
 --- a/meson.build	2018-09-25 19:27:31.000000000 -0500
-+++ b/meson.build	2018-10-01 21:28:10.185896945 -0500
++++ b/meson.build	2018-10-01 22:30:29.648303792 -0500
 @@ -101,13 +101,11 @@
  
  accounts_dep = dependency('accountsservice', version: '>= 0.6.39')
@@ -64,7 +64,7 @@ diff '--exclude=.git' -urN a/meson.build b/meson.build
  
  # Optional dependency for the user accounts panel
  enable_cheese = get_option('cheese')
-@@ -162,6 +165,22 @@
+@@ -162,6 +165,27 @@
  config_h.set('HAVE_CHEESE', enable_cheese,
               description: 'Define to 1 to enable cheese webcam support')
  
@@ -84,10 +84,15 @@ diff '--exclude=.git' -urN a/meson.build b/meson.build
 +config_h.set('BUILD_ONLINE_ACCOUNTS', enable_goa,
 +             description: 'Defined if goa support is enabled')
 +
++# Optional dependency for the sharing panel
++enable_sharing = get_option('sharing')
++config_h.set('BUILD_SHARING', enable_sharing,
++             description: 'Defined if file and screen sharing support is enabled')
++
  # IBus support
  enable_ibus = get_option('ibus')
  if enable_ibus
-@@ -182,48 +201,57 @@
+@@ -182,48 +206,57 @@
               description: 'Define to 1 if Wayland is enabled')
  
  if host_is_linux
@@ -184,7 +189,7 @@ diff '--exclude=.git' -urN a/meson.build b/meson.build
  
  # Check for info panel
  gnome_session_libexecdir = get_option('gnome_session_libexecdir')
-@@ -270,16 +298,21 @@
+@@ -270,16 +303,22 @@
  output += '\n        ' + meson.project_name() + ' - ' + meson.project_version() + '\n'
  output += '    ===================================\n'
  output += ' Options \n'
@@ -211,6 +216,7 @@ diff '--exclude=.git' -urN a/meson.build b/meson.build
 +output += '     IBus (Region panel IBus support) .................... ' + enable_ibus.to_string() + '\n'
 +output += '     Kerberos ............................................ ' + enable_krb.to_string() + '\n'
 +output += '     NetworkManager (Network panel) ...................... ' + enable_networkmanager.to_string() + '\n'
++output += '     Sharing (Sharing panel) ............................. ' + enable_sharing.to_string() + '\n'
 +output += '     Thunderbolt (Thunderbolt panel) ..................... ' + enable_thunderbolt.to_string() + '\n'
 +output += '     Wacom (Wacom tablet panel) .......................... ' + enable_wacom.to_string() + '\n'
 +output += '     Wayland ............................................. ' + enable_wayland.to_string() + '\n'
@@ -220,8 +226,8 @@ diff '--exclude=.git' -urN a/meson.build b/meson.build
 +message(output)
 diff '--exclude=.git' -urN a/meson_options.txt b/meson_options.txt
 --- a/meson_options.txt	2018-09-25 19:27:31.000000000 -0500
-+++ b/meson_options.txt	2018-10-01 20:45:02.536619522 -0500
-@@ -1,6 +1,14 @@
++++ b/meson_options.txt	2018-10-01 22:30:37.545368734 -0500
+@@ -1,6 +1,15 @@
 +option('bluetooth', type: 'boolean', value: true, description: 'build with GNOME Bluetooth support')
  option('cheese', type: 'boolean', value: true, description: 'build with cheese webcam support')
 +option('color', type: 'boolean', value: true, description: 'build with colord support')
@@ -232,11 +238,13 @@ diff '--exclude=.git' -urN a/meson_options.txt b/meson_options.txt
  option('ibus', type: 'boolean', value: true, description: 'build with IBus support')
 +option('krb', type: 'boolean', value: true, description: 'build with kerberos support')
 +option('networkmanager', type: 'boolean', value: true, description: 'build with NetworkManager support')
++option('sharing', type: 'boolean', value: true, description: 'build with file and screen sharing support')
 +option('thunderbolt', type: 'boolean', value: true, description: 'build with Thunderbolt support')
  option('tracing', type: 'boolean', value: false, description: 'add extra debugging information')
-+option('wacom', type: 'boolean', value: true, description: 'build with Wacom support')
- option('wayland', type: 'boolean', value: true, description: 'build with Wayland support')
+-option('wayland', type: 'boolean', value: true, description: 'build with Wayland support')
 \ No newline at end of file
++option('wacom', type: 'boolean', value: true, description: 'build with Wacom support')
++option('wayland', type: 'boolean', value: true, description: 'build with Wayland support')
 diff '--exclude=.git' -urN a/panels/background/bg-pictures-source.c b/panels/background/bg-pictures-source.c
 --- a/panels/background/bg-pictures-source.c	2018-09-25 19:27:31.000000000 -0500
 +++ b/panels/background/bg-pictures-source.c	2018-10-01 19:28:35.218571344 -0500
@@ -632,8 +640,8 @@ diff '--exclude=.git' -urN a/panels/display/meson.build b/panels/display/meson.b
    '-DGNOMELOCALEDIR="@0@"'.format(control_center_localedir)
 diff '--exclude=.git' -urN a/panels/meson.build b/panels/meson.build
 --- a/panels/meson.build	2018-09-25 19:27:31.000000000 -0500
-+++ b/panels/meson.build	2018-10-01 21:19:47.962825390 -0500
-@@ -2,16 +2,13 @@
++++ b/panels/meson.build	2018-10-01 22:19:33.386942125 -0500
+@@ -2,37 +2,69 @@
  
  panels = [
    'background',
@@ -650,7 +658,9 @@ diff '--exclude=.git' -urN a/panels/meson.build b/panels/meson.build
    'privacy',
    'region',
    'search',
-@@ -21,18 +18,48 @@
+-  'sharing',
+   'sound',
+   'universal-access',
    'user-accounts'
  ]
  
@@ -670,11 +680,17 @@ diff '--exclude=.git' -urN a/panels/meson.build b/panels/meson.build
 +endif
 +
 +if enable_cups
++  panels += [
++    'printers'
++  ]
++endif
++
++if enable_sharing
    panels += [
 -    'bluetooth',
 -    'thunderbolt',
 -    'wacom'
-+    'printers'
++    'sharing'
    ]
  endif
  
@@ -892,7 +908,7 @@ diff '--exclude=.git' -urN a/panels/wacom/meson.build b/panels/wacom/meson.build
  test_cflags = cflags + ['-DFAKE_AREA']
 diff '--exclude=.git' -urN a/shell/cc-panel-loader.c b/shell/cc-panel-loader.c
 --- a/shell/cc-panel-loader.c	2018-09-25 19:27:32.000000000 -0500
-+++ b/shell/cc-panel-loader.c	2018-10-01 19:28:56.129733745 -0500
++++ b/shell/cc-panel-loader.c	2018-10-01 22:33:01.190586860 -0500
 @@ -34,7 +34,9 @@
  #ifdef BUILD_BLUETOOTH
  extern GType cc_bluetooth_panel_get_type (void);
@@ -903,7 +919,7 @@ diff '--exclude=.git' -urN a/shell/cc-panel-loader.c b/shell/cc-panel-loader.c
  extern GType cc_date_time_panel_get_type (void);
  extern GType cc_display_panel_get_type (void);
  extern GType cc_info_overview_panel_get_type (void);
-@@ -47,9 +49,13 @@
+@@ -47,13 +49,19 @@
  extern GType cc_wifi_panel_get_type (void);
  #endif /* BUILD_NETWORK */
  extern GType cc_notifications_panel_get_type (void);
@@ -917,7 +933,13 @@ diff '--exclude=.git' -urN a/shell/cc-panel-loader.c b/shell/cc-panel-loader.c
  extern GType cc_privacy_panel_get_type (void);
  extern GType cc_region_panel_get_type (void);
  extern GType cc_search_panel_get_type (void);
-@@ -91,7 +97,9 @@
++#ifdef BUILD_SHARING
+ extern GType cc_sharing_panel_get_type (void);
++#endif /* BUILD_SHARING */
+ extern GType cc_sound_panel_get_type (void);
+ #ifdef BUILD_THUNDERBOLT
+ extern GType cc_bolt_panel_get_type (void);
+@@ -91,7 +99,9 @@
  #ifdef BUILD_BLUETOOTH
    PANEL_TYPE("bluetooth",        cc_bluetooth_panel_get_type,            NULL),
  #endif
@@ -927,7 +949,7 @@ diff '--exclude=.git' -urN a/shell/cc-panel-loader.c b/shell/cc-panel-loader.c
    PANEL_TYPE("datetime",         cc_date_time_panel_get_type,            NULL),
    PANEL_TYPE("display",          cc_display_panel_get_type,              NULL),
    PANEL_TYPE("info-overview",    cc_info_overview_panel_get_type,        NULL),
-@@ -104,9 +112,13 @@
+@@ -104,13 +114,19 @@
    PANEL_TYPE("wifi",             cc_wifi_panel_get_type,                 cc_wifi_panel_static_init_func),
  #endif
    PANEL_TYPE("notifications",    cc_notifications_panel_get_type,        NULL),
@@ -941,6 +963,12 @@ diff '--exclude=.git' -urN a/shell/cc-panel-loader.c b/shell/cc-panel-loader.c
    PANEL_TYPE("privacy",          cc_privacy_panel_get_type,              NULL),
    PANEL_TYPE("region",           cc_region_panel_get_type,               NULL),
    PANEL_TYPE("search",           cc_search_panel_get_type,               NULL),
++#ifdef BUILD_SHARING
+   PANEL_TYPE("sharing",          cc_sharing_panel_get_type,              NULL),
++#endif /* BUILD_SHARING */
+   PANEL_TYPE("sound",            cc_sound_panel_get_type,                NULL),
+ #ifdef BUILD_THUNDERBOLT
+   PANEL_TYPE("thunderbolt",      cc_bolt_panel_get_type,                 NULL),
 diff '--exclude=.git' -urN a/shell/meson.build b/shell/meson.build
 --- a/shell/meson.build	2018-09-25 19:27:32.000000000 -0500
 +++ b/shell/meson.build	2018-10-01 21:08:15.984112655 -0500

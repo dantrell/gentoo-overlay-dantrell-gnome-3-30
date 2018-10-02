@@ -12,7 +12,7 @@ LICENSE="GPL-2+"
 SLOT="2"
 KEYWORDS="*"
 
-IUSE="+bluetooth +colord +cups doc elogind +gnome-online-accounts +ibus input_devices_wacom kerberos libinput networkmanager systemd thunderbolt v4l vanilla-datetime vanilla-hostname wayland"
+IUSE="+bluetooth +colord +cups doc elogind +gnome-online-accounts +ibus input_devices_wacom kerberos libinput networkmanager +share systemd thunderbolt v4l vanilla-datetime vanilla-hostname wayland"
 REQUIRED_USE="
 	?? ( elogind systemd )
 	wayland? ( || ( elogind systemd ) )
@@ -158,6 +158,7 @@ src_configure() {
 		-D ibus=$(usex ibus true false)
 		-D krb=$(usex kerberos true false)
 		-D networkmanager=$(usex networkmanager true false)
+		-D sharing=$(usex share true false)
 		-D thunderbolt=$(usex thunderbolt true false)
 		-D tracing=false
 		-D wacom=$(usex input_devices_wacom true false)
