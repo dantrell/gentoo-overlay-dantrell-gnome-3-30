@@ -12,7 +12,7 @@ LICENSE="GPL-2+"
 SLOT="2"
 KEYWORDS="*"
 
-IUSE="doc elogind +ibus libinput systemd v4l vanilla-datetime vanilla-hostname wayland"
+IUSE="+bluetooth +colord +cups doc elogind +gnome-online-accounts +ibus input_devices_wacom kerberos libinput networkmanager systemd thunderbolt v4l vanilla-datetime vanilla-hostname wayland"
 REQUIRED_USE="
 	?? ( elogind systemd )
 	wayland? ( || ( elogind systemd ) )
@@ -48,30 +48,32 @@ COMMON_DEPEND="
 	x11-libs/libXxf86misc
 	>=x11-libs/libXi-1.2
 
-	media-video/cheese
-
-	>=net-wireless/gnome-bluetooth-3.18.2:=
-	net-libs/libsoup:2.4
-	>=x11-misc/colord-0.1.34:0=
-	>=x11-libs/colord-gtk-0.1.24
-
-	>=net-print/cups-1.7[dbus]
-	>=net-fs/samba-4.0.0[client]
-
-	>=media-libs/grilo-0.3.0:0.3=
-	>=net-libs/gnome-online-accounts-3.21.5:=
+	bluetooth? ( >=net-wireless/gnome-bluetooth-3.18.2:= )
+	colord? (
+		net-libs/libsoup:2.4
+		>=x11-misc/colord-0.1.34:0=
+		>=x11-libs/colord-gtk-0.1.24 )
+	cups? (
+		>=net-print/cups-1.7[dbus]
+		>=net-fs/samba-4.0.0[client]
+	)
+	gnome-online-accounts? (
+		>=media-libs/grilo-0.3.0:0.3=
+		>=net-libs/gnome-online-accounts-3.21.5:= )
 	ibus? ( >=app-i18n/ibus-1.5.2 )
-	app-crypt/mit-krb5
-	>=gnome-extra/nm-applet-1.2.0
-	>=net-misc/networkmanager-1.10.0:=[modemmanager]
-	>=net-misc/modemmanager-0.7.990
+	kerberos? ( app-crypt/mit-krb5 )
+	networkmanager? (
+		>=gnome-extra/nm-applet-1.2.0
+		>=net-misc/networkmanager-1.10.0:=[modemmanager]
+		>=net-misc/modemmanager-0.7.990 )
 	v4l? (
 		media-libs/clutter-gtk:1.0[gtk]
 		>=media-video/cheese-3.5.91 )
-	>=dev-libs/libwacom-0.7
-	>=media-libs/clutter-1.11.3:1.0[gtk]
-	media-libs/clutter-gtk:1.0[gtk]
-	>=x11-libs/libXi-1.2
+	input_devices_wacom? (
+		>=dev-libs/libwacom-0.7
+		>=media-libs/clutter-1.11.3:1.0[gtk]
+		media-libs/clutter-gtk:1.0[gtk]
+		>=x11-libs/libXi-1.2 )
 "
 # <gnome-color-manager-3.1.2 has file collisions with g-c-c-3.1.x
 # libgnomekbd needed only for gkbd-keyboard-display tool
@@ -84,13 +86,16 @@ COMMON_DEPEND="
 # cups-pk-helper provides org.opensuse.cupspkhelper.mechanism.all-edit policykit helper policy
 RDEPEND="${COMMON_DEPEND}
 	x11-themes/adwaita-icon-theme
-	>=gnome-extra/gnome-color-manager-3.28.0
-	gnome-base/gnome-settings-daemon
+	colord? ( >=gnome-extra/gnome-color-manager-3.28.0 )
+	cups? (
+		app-admin/system-config-printer
+		net-print/cups-pk-helper )
+	input_devices_wacom? ( gnome-base/gnome-settings-daemon[input_devices_wacom] )
 	ibus? ( >=gnome-base/libgnomekbd-3 )
 	wayland? ( libinput? ( dev-libs/libinput ) )
 	!wayland? (
 		libinput? ( >=x11-drivers/xf86-input-libinput-0.19.0 )
-		>=x11-drivers/xf86-input-wacom-0.33.0 )
+		input_devices_wacom? ( >=x11-drivers/xf86-input-wacom-0.33.0 ) )
 
 	!<gnome-base/gdm-2.91.94
 	!<gnome-extra/gnome-color-manager-3.1.2
@@ -118,6 +123,10 @@ DEPEND="${COMMON_DEPEND}
 "
 
 src_prepare() {
+	# Make some panels and dependencies optional
+	# https://bugzilla.gnome.org/686840, 697478, 700145
+	eapply "${FILESDIR}"/${PN}-3.30.1-optional.patch
+
 	# From GNOME:
 	# 	https://bugzilla.gnome.org/show_bug.cgi?id=774324
 	# 	https://bugzilla.gnome.org/show_bug.cgi?id=780544
@@ -140,10 +149,18 @@ src_prepare() {
 
 src_configure() {
 	local emesonargs=(
+		-D bluetooth=$(usex bluetooth true false)
 		-D cheese=$(usex v4l true false)
+		-D color=$(usex colord true false)
+		-D cups=$(usex cups true false)
 		-D documentation=$(usex doc true false)
+		-D goa=$(usex gnome-online-accounts true false)
 		-D ibus=$(usex ibus true false)
+		-D krb=$(usex kerberos true false)
+		-D networkmanager=$(usex networkmanager true false)
+		-D thunderbolt=$(usex thunderbolt true false)
 		-D tracing=false
+		-D wacom=$(usex input_devices_wacom true false)
 		-D wayland=$(usex wayland true false)
 	)
 	meson_src_configure
