@@ -10,7 +10,7 @@ HOMEPAGE="https://wiki.gnome.org/Apps/Music"
 
 LICENSE="GPL-2+"
 SLOT="0"
-KEYWORDS=""
+KEYWORDS="~*"
 
 IUSE=""
 REQUIRED_USE="${PYTHON_REQUIRED_USE}"
@@ -38,7 +38,7 @@ RDEPEND="${COMMON_DEPEND}
 	media-libs/gstreamer:1.0[introspection]
 	media-libs/gst-plugins-base:1.0[introspection]
 	media-plugins/gst-plugins-meta:1.0
-	media-plugins/grilo-plugins:0.3[tracker]
+	>=media-plugins/grilo-plugins-0.3.8:0.3[tracker]
 	x11-misc/xdg-user-dirs
 "
 DEPEND="${COMMON_DEPEND}

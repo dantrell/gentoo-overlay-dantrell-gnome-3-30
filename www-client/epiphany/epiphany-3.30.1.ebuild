@@ -17,11 +17,11 @@ COMMON_DEPEND="
 	>=dev-libs/glib-2.52.0:2[dbus]
 	>=x11-libs/gtk+-3.22.13:3
 	>=dev-libs/nettle-3.2:=
-	>=net-libs/webkit-gtk-2.17.4:4=
+	>=net-libs/webkit-gtk-2.21.92:4=
 	>=x11-libs/cairo-1.2
+	>=dev-libs/libdazzle-3.28.0
 	>=app-crypt/gcr-3.5.5:=[gtk]
 	>=x11-libs/gdk-pixbuf-2.36.5:2
-	>=gnome-base/gnome-desktop-2.91.2:3=
 	dev-libs/icu:=
 	>=app-text/iso-codes-0.35
 	>=dev-libs/json-glib-1.2.4
@@ -40,9 +40,9 @@ RDEPEND="${COMMON_DEPEND}
 # paxctl needed for bug #407085
 # appstream-glib needed for appdata.xml gettext translation
 DEPEND="${COMMON_DEPEND}
-	app-text/yelp-tools
 	dev-libs/appstream-glib
 	dev-util/gdbus-codegen
+	dev-util/itstool
 	sys-apps/paxctl
 	>=sys-devel/gettext-0.19.8
 	virtual/pkgconfig
@@ -52,7 +52,7 @@ src_configure() {
 	local emesonargs=(
 		-Ddeveloper_mode=false
 		-Ddistributor_name=Gentoo
-		-Dhttps_everywhere=false
+		-Dtech_preview=false
 		-Dunit_tests=$(usex test true false)
 	)
 	meson_src_configure

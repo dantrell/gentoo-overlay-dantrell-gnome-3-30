@@ -1,10 +1,9 @@
-diff --git a/data/org.gnome.settings-daemon.plugins.power.gschema.xml.in.in b/data/org.gnome.settings-daemon.plugins.power.gschema.xml.in.in
-index 1fd60e7..37fb978 100644
---- a/data/org.gnome.settings-daemon.plugins.power.gschema.xml.in.in
-+++ b/data/org.gnome.settings-daemon.plugins.power.gschema.xml.in.in
-@@ -66,5 +66,10 @@
-       <summary>Battery critical low action</summary>
-       <description>The action to take when the battery is critically low.</description>
+diff '--exclude=.git' -urN a/data/org.gnome.settings-daemon.plugins.power.gschema.xml.in b/data/org.gnome.settings-daemon.plugins.power.gschema.xml.in
+--- a/data/org.gnome.settings-daemon.plugins.power.gschema.xml.in	2018-10-04 13:46:28.000000000 -0500
++++ b/data/org.gnome.settings-daemon.plugins.power.gschema.xml.in	2018-10-08 10:42:07.329353318 -0500
+@@ -41,5 +41,10 @@
+       <summary>Power button action</summary>
+       <description>The action to take when the system power button is pressed. This action is hard-coded (and the setting ignored) on virtual machines (power off) and tablets (suspend).</description>
      </key>
 +    <key name="lid-close-suspend-with-external-monitor" type="b">
 +      <default>false</default>
@@ -13,11 +12,10 @@ index 1fd60e7..37fb978 100644
 +    </key>
    </schema>
  </schemalist>
-diff --git a/plugins/power/gsd-power-manager.c b/plugins/power/gsd-power-manager.c
-index 26ba2c1..c48e9ae 100644
---- a/plugins/power/gsd-power-manager.c
-+++ b/plugins/power/gsd-power-manager.c
-@@ -2195,12 +2195,21 @@ on_randr_event (GnomeRRScreen *screen, gpointer user_data)
+diff '--exclude=.git' -urN a/plugins/power/gsd-power-manager.c b/plugins/power/gsd-power-manager.c
+--- a/plugins/power/gsd-power-manager.c	2018-10-04 13:46:28.000000000 -0500
++++ b/plugins/power/gsd-power-manager.c	2018-10-08 10:42:07.329353318 -0500
+@@ -2432,12 +2432,21 @@
  
          g_debug ("Screen configuration changed");
  

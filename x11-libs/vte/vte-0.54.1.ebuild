@@ -30,7 +30,6 @@ RDEPEND="
 "
 DEPEND="${RDEPEND}
 	dev-libs/libxml2:2
-	dev-util/glib-utils
 	>=dev-util/gtk-doc-am-1.13
 	>=dev-util/intltool-0.35
 	sys-devel/gettext

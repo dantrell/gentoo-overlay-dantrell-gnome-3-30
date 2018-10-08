@@ -4,14 +4,14 @@ EAPI="6"
 GNOME2_LA_PUNT="yes"
 PYTHON_COMPAT=( python{3_4,3_5,3_6,3_7} )
 
-inherit autotools gnome2 python-any-r1 systemd udev virtualx
+inherit gnome2 meson python-any-r1 systemd udev virtualx
 
 DESCRIPTION="Gnome Settings Daemon"
 HOMEPAGE="https://gitlab.gnome.org/GNOME/gnome-settings-daemon"
 
 LICENSE="GPL-2+"
 SLOT="0"
-KEYWORDS=""
+KEYWORDS="*"
 
 IUSE="+colord +cups debug elogind input_devices_wacom networkmanager policykit smartcard systemd test +udev vanilla-inactivity wayland"
 REQUIRED_USE="
@@ -104,49 +104,42 @@ pkg_setup() {
 }
 
 src_prepare() {
-	# From GNOME:
-	# 	https://gitlab.gnome.org/GNOME/gnome-settings-daemon/commit/07b346e4f99a912861978eb77058504af0871d3a
-	# 	https://gitlab.gnome.org/GNOME/gnome-settings-daemon/commit/acdd75f8f1d3802149a34531f19e7dc12595dddf
-	# 	https://gitlab.gnome.org/GNOME/gnome-settings-daemon/commit/f69e9d8c74a46b700d751ec93cd82a3699d6c497
-	eapply "${FILESDIR}"/${PN}-3.30.1.1-support-autotools.patch
-	# Make colord and wacom optional; requires eautoreconf
-	eapply "${FILESDIR}"/${PN}-3.24.3-optional.patch
-	# Allow specifying udevrulesdir via configure, bug 509484; requires eautoreconf
-	eapply "${FILESDIR}"/${PN}-3.26.2-udevrulesdir-configure.patch
+	# Make colord, networkmanager, udev and wacom optional
+	eapply "${FILESDIR}"/${PN}-3.30.1.1-optional.patch
 	# Fix build when Wayland is disabled
 	eapply "${FILESDIR}"/${PN}-3.24.3-fix-without-gdkwayland.patch
 
 	if ! use vanilla-inactivity; then
 		# From GNOME:
 		# 	https://gitlab.gnome.org/GNOME/gnome-settings-daemon/commit/2fdb48fa3333638cee889b8bb80dc1d2b65aaa4a
-		eapply -R "${FILESDIR}"/${PN}-3.27.90-power-default-to-suspend-after-20-minutes-of-inactivity.patch
+		eapply "${FILESDIR}"/${PN}-3.30.1.2-power-dont-default-to-suspend-after-20-minutes-of-inactivity.patch
 	fi
 
 	# From Ben Wolsieffer:
 	# 	https://bugzilla.gnome.org/show_bug.cgi?id=734964
-	eapply "${FILESDIR}"/${PN}-3.12.0-optionally-allow-suspending-with-multiple-monitors-on-lid-close.patch
+	eapply "${FILESDIR}"/${PN}-3.30.1.2-optionally-allow-suspending-with-multiple-monitors-on-lid-close.patch
 
-	eautoreconf
 	gnome2_src_prepare
 }
 
 src_configure() {
-	gnome2_src_configure \
-		--disable-static \
-		--with-udevrulesdir="$(get_udevdir)"/rules.d \
-		$(use_enable colord color) \
-		$(use_enable cups) \
-		$(use_enable debug) \
-		$(use_enable debug more-warnings) \
-		$(use_enable networkmanager network-manager) \
-		$(use_enable smartcard smartcard-support) \
-		$(use_enable udev gudev) \
-		$(use_enable input_devices_wacom wacom) \
-		$(use_enable wayland)
+	local emesonargs=(
+		-D udev_dir="$(get_udevdir)"/rules.d
+		-D alsa=true
+		-D gudev=$(usex udev true false)
+		-D color=$(usex colord true false)
+		-D cups=$(usex cups true false)
+		-D network_manager=$(usex networkmanager true false)
+		-D rfkill=true
+		-D smartcard=$(usex smartcard true false)
+		-D wacom=$(usex input_devices_wacom true false)
+		-D wayland=$(usex wayland true false)
+	)
+	meson_src_configure
 }
 
 src_test() {
-	virtx emake check
+	virtx meson_src_test
 }
 
 pkg_postinst() {
