@@ -12,7 +12,7 @@ LICENSE="GPL-2+"
 SLOT="0"
 KEYWORDS="*"
 
-IUSE="+maps v4l"
+IUSE="doc +maps v4l"
 
 VALA_DEPEND="
 	$(vala_depend)
@@ -24,24 +24,21 @@ VALA_DEPEND="
 "
 # Configure is wrong; it needs cheese-3.5.91, not 3.3.91
 RDEPEND="
-	>=dev-libs/folks-0.9.5:=[eds,telepathy]
-	>=dev-libs/glib-2.37.6:2
+	>=dev-libs/folks-0.11.4:=[eds,telepathy]
+	>=dev-libs/glib-2.44:2
 	>=dev-libs/libgee-0.10:0.8
 	>=gnome-extra/evolution-data-server-3.13.90:=[gnome-online-accounts]
 	>=gnome-base/gnome-desktop-3.0:3=
 	media-libs/clutter:1.0
 	net-libs/gnome-online-accounts:=[vala]
-	>=net-libs/telepathy-glib-0.17.5
+	>=net-libs/telepathy-glib-0.22.0
 	x11-libs/cairo:=
 	x11-libs/gdk-pixbuf:2
-	>=x11-libs/gtk+-3.20.0:3
+	>=x11-libs/gtk+-3.23.1:3
 	x11-libs/pango
-	maps? (
-		media-libs/clutter-gtk:1.0
-		media-libs/libchamplain:0.12
-		>=sci-geosciences/geocode-glib-3.15.3
-	)
-	v4l? ( >=media-video/cheese-3.5.91:= )
+	media-libs/clutter-gtk:1.0
+	doc? ( dev-util/valadoc )
+	v4l? ( >=media-video/cheese-3.3.91:= )
 "
 DEPEND="${RDEPEND}
 	${VALA_DEPEND}
@@ -60,10 +57,10 @@ src_prepare() {
 
 src_configure() {
 	local emesonargs=(
-		-D with-cheese=$(usex v4l yes no)
-		-D maps=$(usex maps true false)
+		-D cheese=$(usex v4l true false)
 		-D telepathy=true
-		-D with-manpage=true
+		-D manpage=true
+		-D docs=$(usex doc true false)
 	)
 	meson_src_configure
 }
