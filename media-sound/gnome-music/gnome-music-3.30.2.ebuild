@@ -10,7 +10,7 @@ HOMEPAGE="https://wiki.gnome.org/Apps/Music"
 
 LICENSE="GPL-2+"
 SLOT="0"
-KEYWORDS="~*"
+KEYWORDS="*"
 
 IUSE=""
 REQUIRED_USE="${PYTHON_REQUIRED_USE}"
