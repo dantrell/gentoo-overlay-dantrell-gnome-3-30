@@ -1,6 +1,6 @@
 diff '--exclude=.git' -urN a/meson.build b/meson.build
---- a/meson.build	2018-09-25 19:27:31.000000000 -0500
-+++ b/meson.build	2018-10-01 22:30:29.648303792 -0500
+--- a/meson.build	2018-10-31 17:03:34.000000000 -0500
++++ b/meson.build	2018-11-08 19:50:39.472962872 -0600
 @@ -101,13 +101,11 @@
  
  accounts_dep = dependency('accountsservice', version: '>= 0.6.39')
@@ -225,8 +225,8 @@ diff '--exclude=.git' -urN a/meson.build b/meson.build
 \ No newline at end of file
 +message(output)
 diff '--exclude=.git' -urN a/meson_options.txt b/meson_options.txt
---- a/meson_options.txt	2018-09-25 19:27:31.000000000 -0500
-+++ b/meson_options.txt	2018-10-01 22:30:37.545368734 -0500
+--- a/meson_options.txt	2018-10-31 17:03:34.000000000 -0500
++++ b/meson_options.txt	2018-11-08 19:50:39.474962863 -0600
 @@ -1,6 +1,15 @@
 +option('bluetooth', type: 'boolean', value: true, description: 'build with GNOME Bluetooth support')
  option('cheese', type: 'boolean', value: true, description: 'build with cheese webcam support')
@@ -246,8 +246,8 @@ diff '--exclude=.git' -urN a/meson_options.txt b/meson_options.txt
 +option('wacom', type: 'boolean', value: true, description: 'build with Wacom support')
 +option('wayland', type: 'boolean', value: true, description: 'build with Wayland support')
 diff '--exclude=.git' -urN a/panels/background/bg-pictures-source.c b/panels/background/bg-pictures-source.c
---- a/panels/background/bg-pictures-source.c	2018-09-25 19:27:31.000000000 -0500
-+++ b/panels/background/bg-pictures-source.c	2018-10-01 19:28:35.218571344 -0500
+--- a/panels/background/bg-pictures-source.c	2018-10-31 17:03:34.000000000 -0500
++++ b/panels/background/bg-pictures-source.c	2018-11-08 19:50:39.474962863 -0600
 @@ -23,13 +23,17 @@
  
  #include "bg-pictures-source.h"
@@ -353,8 +353,8 @@ diff '--exclude=.git' -urN a/panels/background/bg-pictures-source.c b/panels/bac
    self->thumb_factory =
      gnome_desktop_thumbnail_factory_new (GNOME_DESKTOP_THUMBNAIL_SIZE_LARGE);
 diff '--exclude=.git' -urN a/panels/background/meson.build b/panels/background/meson.build
---- a/panels/background/meson.build	2018-09-25 19:27:31.000000000 -0500
-+++ b/panels/background/meson.build	2018-10-01 20:53:41.449889789 -0500
+--- a/panels/background/meson.build	2018-10-31 17:03:34.000000000 -0500
++++ b/panels/background/meson.build	2018-11-08 19:50:39.474962863 -0600
 @@ -75,7 +75,6 @@
    'bg-source.c',
    'bg-wallpapers-source.c',
@@ -389,8 +389,8 @@ diff '--exclude=.git' -urN a/panels/background/meson.build b/panels/background/m
    '-DGNOMELOCALEDIR="@0@"'.format(control_center_localedir),
    '-DDATADIR="@0@"'.format(control_center_datadir),
 diff '--exclude=.git' -urN a/panels/bluetooth/meson.build b/panels/bluetooth/meson.build
---- a/panels/bluetooth/meson.build	2018-09-25 19:27:31.000000000 -0500
-+++ b/panels/bluetooth/meson.build	2018-10-01 21:23:09.599462402 -0500
+--- a/panels/bluetooth/meson.build	2018-10-31 17:03:34.000000000 -0500
++++ b/panels/bluetooth/meson.build	2018-11-08 19:50:39.474962863 -0600
 @@ -29,7 +29,13 @@
    export: true
  )
@@ -407,8 +407,8 @@ diff '--exclude=.git' -urN a/panels/bluetooth/meson.build b/panels/bluetooth/mes
  cflags += '-DGNOMELOCALEDIR="@0@"'.format(control_center_localedir)
  
 diff '--exclude=.git' -urN a/panels/color/meson.build b/panels/color/meson.build
---- a/panels/color/meson.build	2018-09-25 19:27:31.000000000 -0500
-+++ b/panels/color/meson.build	2018-10-01 21:05:01.908493920 -0500
+--- a/panels/color/meson.build	2018-10-31 17:03:34.000000000 -0500
++++ b/panels/color/meson.build	2018-11-08 19:50:39.474962863 -0600
 @@ -40,13 +40,18 @@
  )
  
@@ -431,9 +431,18 @@ diff '--exclude=.git' -urN a/panels/color/meson.build b/panels/color/meson.build
    '-DGNOMELOCALEDIR="@0@"'.format(control_center_localedir),
    '-DBINDIR="@0@"'.format(control_center_bindir)
 diff '--exclude=.git' -urN a/panels/display/cc-display-panel.c b/panels/display/cc-display-panel.c
---- a/panels/display/cc-display-panel.c	2018-09-25 19:27:31.000000000 -0500
-+++ b/panels/display/cc-display-panel.c	2018-10-01 21:53:49.119273148 -0500
-@@ -33,7 +33,9 @@
+--- a/panels/display/cc-display-panel.c	2018-10-31 17:03:34.000000000 -0500
++++ b/panels/display/cc-display-panel.c	2018-11-08 19:52:13.676506670 -0600
+@@ -18,6 +18,8 @@
+  *
+  */
+ 
++#include <config.h>
++
+ #include "cc-display-panel.h"
+ 
+ #include <gtk/gtk.h>
+@@ -33,7 +35,9 @@
  #include "cc-display-config-manager-dbus.h"
  #include "cc-display-config.h"
  #include "cc-display-arrangement.h"
@@ -442,8 +451,8 @@ diff '--exclude=.git' -urN a/panels/display/cc-display-panel.c b/panels/display/
 +#endif /* BUILD_COLOR */
  #include "cc-display-resources.h"
  
- #define PANEL_PADDING   32
-@@ -65,7 +67,9 @@
+ /* The minimum supported size for the panel */
+@@ -69,7 +73,9 @@
    GtkSizeGroup *rows_size_group;
    GtkWidget *stack;
  
@@ -453,7 +462,7 @@ diff '--exclude=.git' -urN a/panels/display/cc-display-panel.c b/panels/display/
    GSettings *settings_color;
  
    UpClient *up_client;
-@@ -106,8 +110,10 @@
+@@ -110,8 +116,10 @@
  get_resolution_string (CcDisplayMode *mode);
  static const gchar *
  get_frequency_string (CcDisplayMode *mode);
@@ -464,7 +473,7 @@ diff '--exclude=.git' -urN a/panels/display/cc-display-panel.c b/panels/display/
  static gboolean
  should_show_rotation (CcDisplayPanel *panel,
                        CcDisplayMonitor  *output);
-@@ -272,7 +278,9 @@
+@@ -276,7 +284,9 @@
    g_clear_object (&self->shell_cancellable);
    g_clear_object (&self->shell_proxy);
  
@@ -474,7 +483,7 @@ diff '--exclude=.git' -urN a/panels/display/cc-display-panel.c b/panels/display/
  
    G_OBJECT_CLASS (cc_display_panel_parent_class)->dispose (object);
  }
-@@ -1044,7 +1052,9 @@
+@@ -1077,7 +1087,9 @@
  
    gtk_container_add (GTK_CONTAINER (frame), make_output_ui (panel));
  
@@ -484,7 +493,7 @@ diff '--exclude=.git' -urN a/panels/display/cc-display-panel.c b/panels/display/
  
    g_clear_object (&panel->rows_size_group);
    return make_scrollable (vbox);
-@@ -1296,7 +1306,9 @@
+@@ -1329,7 +1341,9 @@
    g_signal_connect_object (panel, "current-output", G_CALLBACK (replace_current_output_ui),
                             frame, G_CONNECT_SWAPPED);
  
@@ -494,7 +503,7 @@ diff '--exclude=.git' -urN a/panels/display/cc-display-panel.c b/panels/display/
  
    g_clear_object (&panel->rows_size_group);
    return vbox;
-@@ -1356,7 +1368,9 @@
+@@ -1389,7 +1403,9 @@
    g_signal_connect_object (panel, "current-output", G_CALLBACK (replace_current_output_ui),
                             frame, G_CONNECT_SWAPPED);
  
@@ -504,7 +513,7 @@ diff '--exclude=.git' -urN a/panels/display/cc-display-panel.c b/panels/display/
  
    g_clear_object (&panel->rows_size_group);
    return vbox;
-@@ -1492,7 +1506,9 @@
+@@ -1525,7 +1541,9 @@
    gtk_container_add (GTK_CONTAINER (listbox),
                       make_mirror_resolution_row (panel, panel->current_output));
  
@@ -514,7 +523,7 @@ diff '--exclude=.git' -urN a/panels/display/cc-display-panel.c b/panels/display/
  
    g_clear_object (&panel->rows_size_group);
    return vbox;
-@@ -1784,7 +1800,9 @@
+@@ -1818,7 +1836,9 @@
    g_signal_connect_object (panel, "current-output", G_CALLBACK (replace_current_output_ui),
                             frame, G_CONNECT_SWAPPED);
  
@@ -524,7 +533,7 @@ diff '--exclude=.git' -urN a/panels/display/cc-display-panel.c b/panels/display/
  
    g_clear_object (&panel->rows_size_group);
    return make_scrollable (vbox);
-@@ -2096,6 +2114,7 @@
+@@ -2130,6 +2150,7 @@
    return !panel->has_accelerometer;
  }
  
@@ -532,7 +541,7 @@ diff '--exclude=.git' -urN a/panels/display/cc-display-panel.c b/panels/display/
  static void
  cc_display_panel_night_light_activated (CcDisplayPanel *panel)
  {
-@@ -2104,6 +2123,7 @@
+@@ -2138,6 +2159,7 @@
    gtk_window_set_transient_for (GTK_WINDOW (panel->night_light_dialog), toplevel);
    gtk_window_present (GTK_WINDOW (panel->night_light_dialog));
  }
@@ -540,7 +549,7 @@ diff '--exclude=.git' -urN a/panels/display/cc-display-panel.c b/panels/display/
  
  static void
  mapped_cb (CcDisplayPanel *panel)
-@@ -2233,6 +2253,7 @@
+@@ -2267,6 +2289,7 @@
    update_has_accel (self);
  }
  
@@ -548,7 +557,7 @@ diff '--exclude=.git' -urN a/panels/display/cc-display-panel.c b/panels/display/
  static void
  night_light_sync_label (GtkWidget *label, GSettings *settings)
  {
-@@ -2241,14 +2262,18 @@
+@@ -2275,14 +2298,18 @@
                         /* TRANSLATORS: the state of the night light setting */
                         ret ? _("On") : _("Off"));
  }
@@ -567,7 +576,7 @@ diff '--exclude=.git' -urN a/panels/display/cc-display-panel.c b/panels/display/
  static GtkWidget *
  make_night_light_widget (CcDisplayPanel *self)
  {
-@@ -2276,6 +2301,7 @@
+@@ -2310,6 +2337,7 @@
    gtk_widget_set_margin_top (frame, SECTION_PADDING);
    return frame;
  }
@@ -575,7 +584,7 @@ diff '--exclude=.git' -urN a/panels/display/cc-display-panel.c b/panels/display/
  
  static void
  session_bus_ready (GObject        *source,
-@@ -2326,7 +2352,10 @@
+@@ -2360,7 +2388,10 @@
    gtk_container_add (GTK_CONTAINER (self), self->stack);
    gtk_widget_show_all (self->stack);
  
@@ -587,8 +596,8 @@ diff '--exclude=.git' -urN a/panels/display/cc-display-panel.c b/panels/display/
  
    self->up_client = up_client_new ();
 diff '--exclude=.git' -urN a/panels/display/meson.build b/panels/display/meson.build
---- a/panels/display/meson.build	2018-09-25 19:27:31.000000000 -0500
-+++ b/panels/display/meson.build	2018-10-01 21:39:52.078557239 -0500
+--- a/panels/display/meson.build	2018-10-31 17:03:34.000000000 -0500
++++ b/panels/display/meson.build	2018-11-08 19:50:39.474962863 -0600
 @@ -24,16 +24,26 @@
    'cc-display-config-dbus.c',
    'cc-display-config-manager-dbus.c',
@@ -639,8 +648,8 @@ diff '--exclude=.git' -urN a/panels/display/meson.build b/panels/display/meson.b
    '-DDATADIR="@0@"'.format(control_center_datadir),
    '-DGNOMELOCALEDIR="@0@"'.format(control_center_localedir)
 diff '--exclude=.git' -urN a/panels/meson.build b/panels/meson.build
---- a/panels/meson.build	2018-09-25 19:27:31.000000000 -0500
-+++ b/panels/meson.build	2018-10-01 22:19:33.386942125 -0500
+--- a/panels/meson.build	2018-10-31 17:03:34.000000000 -0500
++++ b/panels/meson.build	2018-11-08 19:50:39.475962858 -0600
 @@ -2,37 +2,69 @@
  
  panels = [
@@ -722,8 +731,8 @@ diff '--exclude=.git' -urN a/panels/meson.build b/panels/meson.build
  panels_libs = []
  foreach cappletname: panels
 diff '--exclude=.git' -urN a/panels/network/meson.build b/panels/network/meson.build
---- a/panels/network/meson.build	2018-09-25 19:27:31.000000000 -0500
-+++ b/panels/network/meson.build	2018-10-01 21:13:51.951903301 -0500
+--- a/panels/network/meson.build	2018-10-31 17:03:35.000000000 -0500
++++ b/panels/network/meson.build	2018-11-08 19:50:39.475962858 -0600
 @@ -1,8 +1,14 @@
 -deps = common_deps + network_manager_deps + [
 +deps = common_deps + [
@@ -748,8 +757,8 @@ diff '--exclude=.git' -urN a/panels/network/meson.build b/panels/network/meson.b
 \ No newline at end of file
 +panels_libs += network_panel_lib
 diff '--exclude=.git' -urN a/panels/online-accounts/meson.build b/panels/online-accounts/meson.build
---- a/panels/online-accounts/meson.build	2018-09-25 19:27:31.000000000 -0500
-+++ b/panels/online-accounts/meson.build	2018-10-01 21:04:43.617341094 -0500
+--- a/panels/online-accounts/meson.build	2018-10-31 17:03:35.000000000 -0500
++++ b/panels/online-accounts/meson.build	2018-11-08 19:50:39.475962858 -0600
 @@ -29,10 +29,14 @@
    export: true
  )
@@ -770,9 +779,9 @@ diff '--exclude=.git' -urN a/panels/online-accounts/meson.build b/panels/online-
  cflags += '-DGNOMELOCALEDIR="@0@"'.format(control_center_localedir)
  
 diff '--exclude=.git' -urN a/panels/power/cc-power-panel.c b/panels/power/cc-power-panel.c
---- a/panels/power/cc-power-panel.c	2018-09-25 19:27:31.000000000 -0500
-+++ b/panels/power/cc-power-panel.c	2018-10-01 19:33:15.774751197 -0500
-@@ -1937,7 +1937,7 @@
+--- a/panels/power/cc-power-panel.c	2018-10-31 17:03:35.000000000 -0500
++++ b/panels/power/cc-power-panel.c	2018-11-08 19:50:39.475962858 -0600
+@@ -1942,7 +1942,7 @@
                      G_CALLBACK (wifi_switch_changed), self);
  #endif
  
@@ -782,8 +791,8 @@ diff '--exclude=.git' -urN a/panels/power/cc-power-panel.c b/panels/power/cc-pow
    self->bt_rfkill = cc_object_storage_create_dbus_proxy_sync (G_BUS_TYPE_SESSION,
                                                                G_DBUS_PROXY_FLAGS_NONE,
 diff '--exclude=.git' -urN a/panels/power/meson.build b/panels/power/meson.build
---- a/panels/power/meson.build	2018-09-25 19:27:31.000000000 -0500
-+++ b/panels/power/meson.build	2018-10-01 21:22:23.041084697 -0500
+--- a/panels/power/meson.build	2018-10-31 17:03:35.000000000 -0500
++++ b/panels/power/meson.build	2018-11-08 19:50:39.475962858 -0600
 @@ -36,11 +36,11 @@
  
  cflags += '-DGNOMELOCALEDIR="@0@"'.format(control_center_localedir)
@@ -799,8 +808,8 @@ diff '--exclude=.git' -urN a/panels/power/meson.build b/panels/power/meson.build
  endif
  
 diff '--exclude=.git' -urN a/panels/user-accounts/meson.build b/panels/user-accounts/meson.build
---- a/panels/user-accounts/meson.build	2018-09-25 19:27:32.000000000 -0500
-+++ b/panels/user-accounts/meson.build	2018-10-01 21:05:31.343739760 -0500
+--- a/panels/user-accounts/meson.build	2018-10-31 17:03:35.000000000 -0500
++++ b/panels/user-accounts/meson.build	2018-11-08 19:50:39.475962858 -0600
 @@ -156,21 +156,31 @@
    'um-user-panel.c'
  )
@@ -838,8 +847,8 @@ diff '--exclude=.git' -urN a/panels/user-accounts/meson.build b/panels/user-acco
    deps += cheese_deps
  endif
 diff '--exclude=.git' -urN a/panels/user-accounts/um-realm-manager.c b/panels/user-accounts/um-realm-manager.c
---- a/panels/user-accounts/um-realm-manager.c	2018-09-25 19:27:32.000000000 -0500
-+++ b/panels/user-accounts/um-realm-manager.c	2018-10-01 19:28:35.219571352 -0500
+--- a/panels/user-accounts/um-realm-manager.c	2018-10-31 17:03:35.000000000 -0500
++++ b/panels/user-accounts/um-realm-manager.c	2018-11-08 19:50:39.475962858 -0600
 @@ -22,7 +22,9 @@
  
  #include "um-realm-manager.h"
@@ -886,8 +895,8 @@ diff '--exclude=.git' -urN a/panels/user-accounts/um-realm-manager.c b/panels/us
  
  void
 diff '--exclude=.git' -urN a/panels/wacom/meson.build b/panels/wacom/meson.build
---- a/panels/wacom/meson.build	2018-09-25 19:27:32.000000000 -0500
-+++ b/panels/wacom/meson.build	2018-10-01 21:07:15.023604743 -0500
+--- a/panels/wacom/meson.build	2018-10-31 17:03:35.000000000 -0500
++++ b/panels/wacom/meson.build	2018-11-08 19:50:39.476962853 -0600
 @@ -1,10 +1,16 @@
 -deps = wacom_deps + [
 +deps = [
@@ -907,8 +916,8 @@ diff '--exclude=.git' -urN a/panels/wacom/meson.build b/panels/wacom/meson.build
  
  test_cflags = cflags + ['-DFAKE_AREA']
 diff '--exclude=.git' -urN a/shell/cc-panel-loader.c b/shell/cc-panel-loader.c
---- a/shell/cc-panel-loader.c	2018-09-25 19:27:32.000000000 -0500
-+++ b/shell/cc-panel-loader.c	2018-10-01 22:33:01.190586860 -0500
+--- a/shell/cc-panel-loader.c	2018-10-31 17:03:36.000000000 -0500
++++ b/shell/cc-panel-loader.c	2018-11-08 19:50:39.476962853 -0600
 @@ -34,7 +34,9 @@
  #ifdef BUILD_BLUETOOTH
  extern GType cc_bluetooth_panel_get_type (void);
@@ -970,8 +979,8 @@ diff '--exclude=.git' -urN a/shell/cc-panel-loader.c b/shell/cc-panel-loader.c
  #ifdef BUILD_THUNDERBOLT
    PANEL_TYPE("thunderbolt",      cc_bolt_panel_get_type,                 NULL),
 diff '--exclude=.git' -urN a/shell/meson.build b/shell/meson.build
---- a/shell/meson.build	2018-09-25 19:27:32.000000000 -0500
-+++ b/shell/meson.build	2018-10-01 21:08:15.984112655 -0500
+--- a/shell/meson.build	2018-10-31 17:03:37.000000000 -0500
++++ b/shell/meson.build	2018-11-08 19:50:39.476962853 -0600
 @@ -81,7 +81,7 @@
    shell_deps += cheese_deps
  endif
@@ -982,8 +991,8 @@ diff '--exclude=.git' -urN a/shell/meson.build b/shell/meson.build
  endif
  
 diff '--exclude=.git' -urN a/tests/meson.build b/tests/meson.build
---- a/tests/meson.build	2018-09-25 19:27:32.000000000 -0500
-+++ b/tests/meson.build	2018-10-01 21:25:14.601475654 -0500
+--- a/tests/meson.build	2018-10-31 17:03:37.000000000 -0500
++++ b/tests/meson.build	2018-11-08 19:50:39.476962853 -0600
 @@ -1,7 +1,9 @@
  subdir('common')
  #subdir('datetime')

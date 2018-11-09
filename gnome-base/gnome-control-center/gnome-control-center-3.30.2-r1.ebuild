@@ -125,7 +125,7 @@ DEPEND="${COMMON_DEPEND}
 src_prepare() {
 	# Make some panels and dependencies optional
 	# https://bugzilla.gnome.org/686840, 697478, 700145
-	eapply "${FILESDIR}"/${PN}-3.30.1-optional.patch
+	eapply "${FILESDIR}"/${PN}-3.30.2-optional.patch
 
 	# From GNOME:
 	# 	https://bugzilla.gnome.org/show_bug.cgi?id=774324
