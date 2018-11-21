@@ -11,7 +11,7 @@ DESCRIPTION="An API documentation browser for GNOME"
 HOMEPAGE="https://wiki.gnome.org/Apps/Devhelp"
 
 LICENSE="GPL-2+"
-SLOT="0/3-4" # subslot = 3-(libdevhelp-3 soname version)
+SLOT="0/3-5" # subslot = 3-(libdevhelp-3 soname version)
 KEYWORDS="*"
 
 IUSE="doc"
@@ -35,6 +35,7 @@ RDEPEND="${COMMON_DEPEND}
 DEPEND="${COMMON_DEPEND}
 	${PYTHON_DEPS}
 	dev-libs/libxml2:2
+	dev-util/itstool
 	>=dev-util/gtk-doc-am-1.25
 	>=sys-devel/gettext-0.19.7
 	virtual/pkgconfig

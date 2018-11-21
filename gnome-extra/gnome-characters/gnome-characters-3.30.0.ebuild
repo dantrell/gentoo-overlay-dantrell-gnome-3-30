@@ -32,10 +32,6 @@ DEPEND="${RDEPEND}
 "
 
 src_configure() {
-	gnome2_src_configure --disable-dogtail
-}
-
-src_configure() {
 	local emesonargs=(
 		-D pangoft2=true
 		-D installed_tests=false

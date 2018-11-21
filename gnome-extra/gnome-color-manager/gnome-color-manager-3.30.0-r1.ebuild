@@ -34,21 +34,31 @@ DEPEND="${RDEPEND}
 	app-text/docbook-sgml-dtd:4.1
 	app-text/docbook-sgml-utils
 	dev-libs/appstream-glib
-	dev-libs/libxslt
 	dev-util/itstool
-	>=sys-devel/gettext-0.19.7
+	>=sys-devel/gettext-0.19.8
 	virtual/pkgconfig
 "
 
 PATCHES=(
 	"${FILESDIR}"/${PN}-3.26.0-fix-libm-check.patch
+
+	# https://bugzilla.gnome.org/show_bug.cgi?id=796428
+	"${FILESDIR}"/${PN}-3.28-remove-unwvanted-check.patch
 )
+
+src_prepare() {
+	# Fix hard-coded package name
+	# https://gitlab.gnome.org/GNOME/gnome-color-manager/issues/3
+	sed -e 's:argyllcms:media-gfx/argyllcms:' -i src/gcm-utils.h || die
+
+	gnome2_src_prepare
+}
 
 src_configure() {
 	local emesonargs=(
-		-D enable-tests=false
-		-D enable-exiv=$(usex raw true false)
-		-D enable-packagekit=$(usex packagekit true false)
+		-D tests=false
+		-D exiv=$(usex raw true false)
+		-D packagekit=$(usex packagekit true false)
 	)
 	meson_src_configure
 }
