@@ -34,6 +34,7 @@ DEPEND="${COMMON_DEPEND}
 	cairo? ( x11-libs/cairo[glib] )
 	test? (
 		dev-libs/atk[introspection]
+		dev-python/pytest[${PYTHON_USEDEP}]
 		media-fonts/font-cursor-misc
 		media-fonts/font-misc-misc
 		x11-libs/cairo[glib]
