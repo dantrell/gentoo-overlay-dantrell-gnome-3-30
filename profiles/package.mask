@@ -30,6 +30,7 @@ dev-libs/gobject-introspection-common::gnome-kit
 dev-libs/gobject-introspection::gentoo
 dev-libs/gobject-introspection::gnome-kit
 dev-libs/jsonrpc-glib::gentoo
+dev-libs/jsonrpc-glib::gnome-kit
 dev-libs/libdazzle::gentoo
 dev-libs/template-glib::gentoo
 dev-libs/template-glib::gnome-kit
