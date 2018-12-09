@@ -47,11 +47,11 @@ PATCHES=(
 )
 
 src_prepare() {
+	gnome2_src_prepare
+
 	# Fix hard-coded package name
 	# https://gitlab.gnome.org/GNOME/gnome-color-manager/issues/3
-	sed -e 's:argyllcms:media-gfx/argyllcms:' -i src/gcm-utils.h || die
-
-	gnome2_src_prepare
+	sed 's:argyllcms:media-gfx/argyllcms:' -i src/gcm-utils.h || die
 }
 
 src_configure() {
