@@ -1,0 +1,56 @@
+From 1b738cec18c159a71334f6563ad0f197e675d2cb Mon Sep 17 00:00:00 2001
+From: Niels De Graef <nielsdegraef@gmail.com>
+Date: Wed, 31 Oct 2018 19:58:05 +0100
+Subject: [PATCH] Fix the valadoc build.
+
+This was broken after splitting of a separate library for testing
+purposes.
+
+Fixes #108.
+---
+ docs/meson.build | 3 ++-
+ src/meson.build  | 4 ++--
+ 2 files changed, 4 insertions(+), 3 deletions(-)
+
+diff --git a/docs/meson.build b/docs/meson.build
+index 4a77608..54dfbd8 100644
+--- a/docs/meson.build
++++ b/docs/meson.build
+@@ -16,11 +16,12 @@ custom_target('docs',
+     '--pkg=folks',
+     '--pkg=folks-eds',
+     '--pkg=libedataserverui-1.2',
++    '--pkg=libhandy-0.0',
+     '--pkg=custom',
+     '--pkg=config',
+     '--vapidir=@0@'.format(join_paths(meson.source_root(), 'vapi')),
+     '--directory=@OUTDIR@',
+-    contacts_vala_sources,
++    [ libcontacts_sources, contacts_vala_sources ],
+   ],
+   build_by_default: true,
+ )
+diff --git a/src/meson.build b/src/meson.build
+index 9738386..d7f8439 100644
+--- a/src/meson.build
++++ b/src/meson.build
+@@ -5,14 +5,14 @@ install_data('org.gnome.Contacts.gschema.xml',
+ )
+ 
+ # Common library
+-libcontacts_sources = [
++libcontacts_sources = files(
+   'contacts-contact.vala',
+   'contacts-esd-setup.vala',
+   'contacts-im-service.vala',
+   'contacts-store.vala',
+   'contacts-typeset.vala',
+   'contacts-utils.vala',
+-]
++)
+ 
+ contacts_vala_args = [
+   '--target-glib=@0@'.format(min_glib_version),
+-- 
+2.18.1
+
