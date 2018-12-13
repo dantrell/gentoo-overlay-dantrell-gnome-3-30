@@ -61,7 +61,7 @@ RDEPEND="
 		>=app-text/gspell-1.2.0
 		>=app-text/enchant-2:2=
 	)
-	sysprof? ( >=dev-util/sysprof-3.28.0[gtk] )
+	sysprof? ( >=dev-util/sysprof-3.30.2[gtk] )
 	vala? (
 		dev-lang/vala:=
 		$(vala_depend)
@@ -120,7 +120,7 @@ src_prepare() {
 
 src_configure() {
 	local emesonargs=(
-		-D python_libprefix="${EPYTHON/.*}"
+		-D python_libprefix="${EPYTHON}"
 		-D enable_tracing=false
 		-D enable_profiling=false # not passing -pg to CFLAGS
 		-D with_channel=other
@@ -140,7 +140,6 @@ src_configure() {
 		-D with_gettext=true
 		-D with_spellcheck=$(usex spell true false)
 		-D with_sysprof=$(usex sysprof true false)
-		-D with_terminal=true
 	)
 	meson_src_configure
 }

@@ -46,6 +46,8 @@ dev-util/gnome-builder::gentoo
 dev-util/gnome-builder::gnome-kit
 dev-util/gnome-devel-docs::gentoo
 dev-util/gnome-devel-docs::gnome-kit
+dev-util/sysprof::gentoo
+dev-util/sysprof::gnome-kit
 dev-vcs/gitg::gentoo
 dev-vcs/gitg::gnome-kit
 games-board/gnome-chess::gentoo
