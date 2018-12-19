@@ -21,12 +21,13 @@ RDEPEND="
 	>=dev-libs/glib-2.38:2
 	>=dev-libs/libxml2-2.6.5:2
 	>=dev-libs/libxslt-1.1.4
-	>=gnome-extra/yelp-xsl-3.12
-	>=net-libs/webkit-gtk-2.7.2:4
+	>=gnome-extra/yelp-xsl-3.27.1
+	>=net-libs/webkit-gtk-2.19.2:4
 	>=x11-libs/gtk+-3.13.3:3
 	x11-themes/adwaita-icon-theme
 "
 DEPEND="${RDEPEND}
+	dev-libs/appstream-glib
 	>=dev-util/gtk-doc-am-1.13
 	>=dev-util/intltool-0.41.0
 	dev-util/itstool
@@ -47,7 +48,8 @@ src_configure() {
 	gnome2_src_configure \
 		--disable-static \
 		--enable-bz2 \
-		--enable-lzma
+		--enable-lzma \
+		APPSTREAM_UTIL=""
 }
 
 src_install() {
