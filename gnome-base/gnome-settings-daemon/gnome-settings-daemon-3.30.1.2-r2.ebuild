@@ -124,7 +124,7 @@ src_prepare() {
 
 src_configure() {
 	local emesonargs=(
-		-D udev_dir="$(get_udevdir)"/rules.d
+		-D udev_dir="$(get_udevdir)"
 		-D alsa=true
 		-D gudev=$(usex udev true false)
 		-D color=$(usex colord true false)
