@@ -44,6 +44,9 @@ PATCHES=(
 
 	# https://bugzilla.gnome.org/show_bug.cgi?id=796428
 	"${FILESDIR}"/${PN}-3.28-remove-unwvanted-check.patch
+
+	# https://gitlab.gnome.org/GNOME/gnome-color-manager/issues/4
+	"${FILESDIR}"/${PN}-3.24.0-exiv2-0.27.patch # bug 674086
 )
 
 src_prepare() {
