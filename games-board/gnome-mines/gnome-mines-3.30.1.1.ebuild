@@ -18,7 +18,7 @@ RDEPEND="
 	dev-libs/libgee:0.8
 	>=x11-libs/gtk+-3.12:3
 	dev-libs/libgnome-games-support:1=
-	>=gnome-base/librsvg-2.32.0:2
+	>=gnome-base/librsvg-2.32.0:2[vala]
 "
 DEPEND="${RDEPEND}
 	$(vala_depend)

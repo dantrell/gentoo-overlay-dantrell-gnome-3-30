@@ -57,6 +57,7 @@ PATCHES=(
 	"${FILESDIR}"/${PN}-2.1.7-test-fix.patch # https://gitlab.gnome.org/GNOME/tracker/merge_requests/59
 	"${FILESDIR}"/${PN}-2.1.7-prevent-stack-smashing.patch
 	"${FILESDIR}"/${PN}-2.1.7-fix-library-symlinks.patch
+	"${FILESDIR}"/${PN}-2.1.7-upgrade-path-fix.patch
 )
 
 function inotify_enabled() {
