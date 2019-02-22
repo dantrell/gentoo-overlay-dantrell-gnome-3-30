@@ -155,6 +155,8 @@ media-sound/gnome-music::gentoo
 media-sound/gnome-music::gnome-kit
 media-video/cheese::gentoo
 media-video/cheese::gnome-kit
+media-video/totem::gentoo
+media-video/totem::gnome-kit
 net-irc/polari::gentoo
 net-irc/polari::gnome-kit
 net-libs/glib-networking::gentoo
