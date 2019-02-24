@@ -2,6 +2,7 @@
 
 EAPI="6"
 GNOME2_LA_PUNT="yes"
+GNOME2_EAUTORECONF="yes"
 
 inherit gnome2 systemd
 
@@ -13,12 +14,11 @@ LICENSE="GPL-2+ CC-BY-SA-3.0"
 SLOT="0/evd3.4-evv3.3"
 KEYWORDS="*"
 
-IUSE="djvu dvi gstreamer gnome gnome-keyring +introspection nautilus nsplugin +postscript t1lib tiff xps"
+IUSE="djvu dvi gstreamer gnome gnome-keyring +introspection nautilus nsplugin postscript spell t1lib tiff xps"
 
 # atk used in libview
 # bundles unarr
 COMMON_DEPEND="
-	>=app-text/gspell-1.6.0
 	dev-libs/atk
 	>=dev-libs/glib-2.36:2[dbus]
 	>=dev-libs/libxml2-2.5:2
@@ -43,6 +43,7 @@ COMMON_DEPEND="
 	introspection? ( >=dev-libs/gobject-introspection-1:= )
 	nautilus? ( >=gnome-base/nautilus-2.91.4 )
 	postscript? ( >=app-text/libspectre-0.2:= )
+	spell? ( >=app-text/gspell-1.6.0:= )
 	tiff? ( >=media-libs/tiff-3.6:0= )
 	xps? ( >=app-text/libgxps-0.2.1:= )
 "
@@ -61,9 +62,14 @@ DEPEND="${COMMON_DEPEND}
 	dev-util/itstool
 	sys-devel/gettext
 	virtual/pkgconfig
+	app-text/yelp-tools
 "
 # eautoreconf needs:
 #  app-text/yelp-tools
+
+PATCHES=(
+	"${FILESDIR}"/${PN}-3.30.2-internal-synctex.patch # don't automagically link to synctex from texlive-core - always use internal copy of this small parser for now; requires eautoreconf
+)
 
 src_prepare() {
 	gnome2_src_prepare
@@ -91,6 +97,7 @@ src_configure() {
 		$(use_enable nautilus) \
 		$(use_enable nsplugin browser-plugin) \
 		$(use_enable postscript ps) \
+		$(use_with spell gspell) \
 		$(use_enable t1lib) \
 		$(use_enable tiff) \
 		$(use_enable xps) \
