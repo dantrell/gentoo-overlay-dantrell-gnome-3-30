@@ -7,7 +7,7 @@ inherit gnome2 meson
 DESCRIPTION="Unicode character map viewer and library"
 HOMEPAGE="https://wiki.gnome.org/Design/Apps/CharacterMap"
 
-LICENSE="GPL-2 BSD"
+LICENSE="GPL-2+ BSD"
 SLOT="0"
 KEYWORDS="*"
 
@@ -25,7 +25,6 @@ RDEPEND="
 	>=x11-libs/pango-1.36[introspection]
 "
 DEPEND="${RDEPEND}
-	dev-libs/appstream-glib
 	dev-libs/libxml2:2
 	>=sys-devel/gettext-0.19.8
 	virtual/pkgconfig

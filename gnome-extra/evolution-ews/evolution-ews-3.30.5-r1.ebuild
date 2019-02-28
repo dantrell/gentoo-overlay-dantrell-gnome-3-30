@@ -23,7 +23,7 @@ RDEPEND="
 	dev-libs/libical:0=
 	>=dev-libs/libmspack-0.4
 	dev-libs/libxml2:2
-	>=gnome-extra/evolution-data-server-${PV}:0=
+	>=gnome-extra/evolution-data-server-${PV}-r1:0=
 	>=mail-client/evolution-${PV}:2.0
 	>=net-libs/libsoup-2.42:2.4
 	>=x11-libs/gtk+-3.10:3
@@ -35,6 +35,14 @@ DEPEND="${RDEPEND}
 	virtual/pkgconfig
 	test? ( net-libs/uhttpmock )
 "
+
+# global scope PATCHES or DOCS array mustn't be used due to double default_src_prepare
+# call; if needed, set them after cmake-utils_src_prepare call, if that works
+src_prepare() {
+	eapply "${FILESDIR}"/${PN}-3.30.5-certificate-validation.patch # requires patch added in eds 3.30.5-r1
+	cmake-utils_src_prepare
+	gnome2_src_prepare
+}
 
 src_configure() {
 	local mycmakeargs=(
