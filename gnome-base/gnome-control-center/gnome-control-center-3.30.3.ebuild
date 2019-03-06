@@ -27,7 +27,7 @@ COMMON_DEPEND="
 	>=x11-libs/gtk+-3.22.0:3[X,wayland?]
 	>=gnome-base/gsettings-desktop-schemas-3.21.4
 	>=gnome-base/gnome-desktop-3.27.90:3=
-	>=gnome-base/gnome-settings-daemon-3.25.90[colord(+),policykit]
+	>=gnome-base/gnome-settings-daemon-3.25.90[colord(+)]
 	>=x11-misc/colord-0.1.34:0=
 
 	>=dev-libs/libpwquality-1.2.2
