@@ -23,7 +23,6 @@ dev-util/devhelp::gentoo
 dev-util/gnome-builder::gentoo
 dev-util/gnome-devel-docs::gentoo
 dev-util/sysprof::gentoo
-dev-vcs/gitg::gentoo
 games-board/gnome-chess::gentoo
 games-board/gnome-mines::gentoo
 games-board/iagno::gentoo
@@ -39,7 +38,6 @@ gnome-base/gnome-core-apps::gentoo
 gnome-base/gnome-core-libs::gentoo
 gnome-base/gnome-desktop::gentoo
 gnome-base/gnome-extra-apps::gentoo
-gnome-base/gnome-flashback::gentoo
 gnome-base/gnome-light::gentoo
 gnome-base/gnome-session::gentoo
 gnome-base/gnome-settings-daemon::gentoo
@@ -65,6 +63,7 @@ gnome-extra/gnome-shell-frippery::gentoo
 gnome-extra/gnome-software::gentoo
 gnome-extra/gnome-system-monitor::gentoo
 gnome-extra/gnome-tweaks::gentoo
+gnome-extra/gnome-usage::gentoo
 gnome-extra/gnome-user-docs::gentoo
 gnome-extra/sushi::gentoo
 gnome-extra/yelp-xsl::gentoo
@@ -93,5 +92,4 @@ x11-misc/gpaste::gentoo
 x11-terms/gnome-terminal::gentoo
 x11-themes/adwaita-icon-theme::gentoo
 x11-themes/gnome-backgrounds::gentoo
-x11-wm/metacity::gentoo
 x11-wm/mutter::gentoo

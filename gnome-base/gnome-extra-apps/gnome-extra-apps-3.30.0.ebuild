@@ -101,7 +101,7 @@ RDEPEND="
 		>=gnome-extra/gnome-documents-3.29
 		>=media-gfx/gnome-photos-${PV}
 		>=media-sound/gnome-music-${PV} )
-	usage? ( >=gnome-extra/gnome-usage-3.28 )
+	usage? ( >=gnome-extra/gnome-usage-${PV} )
 "
 DEPEND=""
 S=${WORKDIR}
