@@ -23,7 +23,7 @@ COMMON_DEPEND="
 	>=net-libs/webkit-gtk-2.20:4
 	gnome-base/gsettings-desktop-schemas
 	>=dev-libs/gobject-introspection-1.30:=
-	>=x11-libs/amtk-5.0
+	>=gui-libs/amtk-5.0
 "
 RDEPEND="${COMMON_DEPEND}
 	${PYTHON_DEPS}
