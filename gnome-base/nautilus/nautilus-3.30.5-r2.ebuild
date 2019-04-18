@@ -27,10 +27,11 @@ COMMON_DEPEND="
 	>=x11-libs/pango-1.28.3
 	>=x11-libs/gtk+-3.22.26:3[introspection?]
 	>=dev-libs/libxml2-2.7.8:2
-	>=gnome-base/gnome-desktop-3:3=
+	!vanilla-thumbnailer? ( >=gnome-base/gnome-desktop-3:3= )
 
 	gnome-base/dconf
 	>=gnome-base/gsettings-desktop-schemas-3.8.0
+	sys-libs/libseccomp
 	x11-libs/libX11
 	x11-libs/libXext
 	x11-libs/libXrender
@@ -38,6 +39,7 @@ COMMON_DEPEND="
 	doc? ( >=dev-util/gtk-doc-am-1.10 )
 	introspection? ( >=dev-libs/gobject-introspection-0.6.4:= )
 	selinux? ( >=sys-libs/libselinux-2 )
+	vanilla-thumbnailer? ( sys-apps/bubblewrap )
 "
 DEPEND="${COMMON_DEPEND}
 	>=dev-lang/perl-5
@@ -90,7 +92,7 @@ src_prepare() {
 	if ! use vanilla-search; then
 		# From Dr. Amr Osman:
 		# 	https://bugs.launchpad.net/ubuntu/+source/nautilus/+bug/1164016/comments/31
-		eapply "${FILESDIR}"/${PN}-3.30.0-support-alternative-search.patch
+		eapply "${FILESDIR}"/${PN}-3.30.5-support-alternative-search.patch
 	fi
 
 	if ! use vanilla-thumbnailer; then

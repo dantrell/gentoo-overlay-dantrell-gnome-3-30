@@ -1,0 +1,430 @@
+diff '--exclude=.git' -urN a/src/nautilus-query.c b/src/nautilus-query.c
+--- a/src/nautilus-query.c	2018-12-12 09:52:43.000000000 -0600
++++ b/src/nautilus-query.c	2019-04-17 23:00:42.964765517 -0500
+@@ -32,24 +32,6 @@
+ #define MIN_RANK 10.0
+ #define MAX_RANK 50.0
+ 
+-struct _NautilusQuery
+-{
+-    GObject parent;
+-
+-    char *text;
+-    GFile *location;
+-    GList *mime_types;
+-    gboolean show_hidden;
+-    GPtrArray *date_range;
+-    NautilusQueryRecursive recursive;
+-    NautilusQuerySearchType search_type;
+-    NautilusQuerySearchContent search_content;
+-
+-    gboolean searching;
+-    char **prepared_words;
+-    GMutex prepared_words_mutex;
+-};
+-
+ static void  nautilus_query_class_init (NautilusQueryClass *class);
+ static void  nautilus_query_init (NautilusQuery *query);
+ 
+diff '--exclude=.git' -urN a/src/nautilus-query.h b/src/nautilus-query.h
+--- a/src/nautilus-query.h	2018-12-12 09:52:43.000000000 -0600
++++ b/src/nautilus-query.h	2019-04-17 23:00:57.676693826 -0500
+@@ -41,6 +41,27 @@
+         NAUTILUS_QUERY_RECURSIVE_INDEXED_ONLY,
+ } NautilusQueryRecursive;
+ 
++struct _NautilusQuery
++{
++    GObject parent;
++
++    char *text;
++    GFile *location;
++    GList *mime_types;
++    gboolean show_hidden;
++    GPtrArray *date_range;
++    NautilusQueryRecursive recursive;
++    NautilusQuerySearchType search_type;
++    NautilusQuerySearchContent search_content;
++
++    gboolean searching;
++    char **prepared_words;
++    GMutex prepared_words_mutex;
++
++    /* Misc */
++    gboolean alternative;
++};
++
+ #define NAUTILUS_TYPE_QUERY		(nautilus_query_get_type ())
+ 
+ G_DECLARE_FINAL_TYPE (NautilusQuery, nautilus_query, NAUTILUS, QUERY, GObject)
+diff '--exclude=.git' -urN a/src/nautilus-search-directory.c b/src/nautilus-search-directory.c
+--- a/src/nautilus-search-directory.c	2018-12-12 09:52:43.000000000 -0600
++++ b/src/nautilus-search-directory.c	2019-04-17 23:00:42.964765517 -0500
+@@ -31,6 +31,7 @@
+ #include "nautilus-file.h"
+ #include "nautilus-query.h"
+ #include "nautilus-search-directory-file.h"
++#include "nautilus-search-engine-simple.h"
+ #include "nautilus-search-engine-model.h"
+ #include "nautilus-search-engine.h"
+ #include "nautilus-search-provider.h"
+@@ -182,6 +183,7 @@
+ start_search (NautilusSearchDirectory *self)
+ {
+     NautilusSearchEngineModel *model_provider;
++    NautilusSearchEngineSimple *simple_provider;
+ 
+     if (!self->query)
+     {
+@@ -209,6 +211,10 @@
+     model_provider = nautilus_search_engine_get_model_provider (self->engine);
+     nautilus_search_engine_model_set_model (model_provider, self->base_model);
+ 
++    simple_provider = nautilus_search_engine_get_simple_provider (self->engine);
++    if (self->query->alternative)
++        self->query->recursive = NAUTILUS_QUERY_RECURSIVE_NEVER;
++
+     reset_file_list (self);
+ 
+     nautilus_search_provider_start (NAUTILUS_SEARCH_PROVIDER (self->engine));
+diff '--exclude=.git' -urN a/src/nautilus-search-engine.c b/src/nautilus-search-engine.c
+--- a/src/nautilus-search-engine.c	2018-12-12 09:52:43.000000000 -0600
++++ b/src/nautilus-search-engine.c	2019-04-17 23:00:42.964765517 -0500
+@@ -545,6 +545,16 @@
+     return priv->model;
+ }
+ 
++NautilusSearchEngineSimple *
++nautilus_search_engine_get_simple_provider (NautilusSearchEngine *engine)
++{
++    NautilusSearchEnginePrivate *priv;
++
++    priv = nautilus_search_engine_get_instance_private (engine);
++
++    return priv->simple;
++}
++
+ gboolean
+ is_recursive_search (NautilusSearchEngineType  engine_type,
+                      NautilusQueryRecursive    recursive,
+diff '--exclude=.git' -urN a/src/nautilus-search-engine.h b/src/nautilus-search-engine.h
+--- a/src/nautilus-search-engine.h	2018-12-12 09:52:43.000000000 -0600
++++ b/src/nautilus-search-engine.h	2019-04-17 23:00:42.964765517 -0500
+@@ -25,6 +25,7 @@
+ 
+ #include "nautilus-directory.h"
+ #include "nautilus-search-engine-model.h"
++#include "nautilus-search-engine-simple.h"
+ #include "nautilus-search-provider.h"
+ 
+ G_BEGIN_DECLS
+@@ -41,6 +42,8 @@
+ NautilusSearchEngine *nautilus_search_engine_new                (void);
+ NautilusSearchEngineModel *
+                       nautilus_search_engine_get_model_provider (NautilusSearchEngine *engine);
++NautilusSearchEngineSimple *
++                      nautilus_search_engine_get_simple_provider (NautilusSearchEngine *engine);
+ 
+ G_END_DECLS
+ 
+diff '--exclude=.git' -urN a/src/nautilus-window-slot.c b/src/nautilus-window-slot.c
+--- a/src/nautilus-window-slot.c	2018-12-12 09:52:43.000000000 -0600
++++ b/src/nautilus-window-slot.c	2019-04-17 23:00:42.965765512 -0500
+@@ -142,6 +142,11 @@
+ 
+ G_DEFINE_TYPE_WITH_PRIVATE (NautilusWindowSlot, nautilus_window_slot, GTK_TYPE_BOX);
+ 
++struct NautilusQueryData {
++    NautilusWindowSlot *self;
++    gboolean alternative;
++};
++
+ static GParamSpec *properties[NUM_PROPERTIES] = { NULL, };
+ 
+ static void nautilus_window_slot_force_reload (NautilusWindowSlot *self);
+@@ -161,7 +166,10 @@
+ char *nautilus_window_slot_get_location_uri (NautilusWindowSlot *self);
+ static void nautilus_window_slot_set_search_visible (NautilusWindowSlot *self,
+                                                      gboolean            visible);
++static void nautilus_window_slot_set_alternative_search_visible (NautilusWindowSlot *self,
++                                                                 gboolean            visible);
+ static gboolean nautilus_window_slot_get_search_visible (NautilusWindowSlot *self);
++static gboolean nautilus_window_slot_get_alternative_search_visible (NautilusWindowSlot *self);
+ static void nautilus_window_slot_set_location (NautilusWindowSlot *self,
+                                                GFile              *location);
+ static void trash_state_changed_cb (NautilusTrashMonitor *monitor,
+@@ -385,6 +393,44 @@
+ }
+ 
+ static void
++update_alternative_search_visible (NautilusWindowSlot *self)
++{
++    NautilusWindowSlotPrivate *priv;
++    NautilusQuery *query;
++    NautilusView *view;
++
++    priv = nautilus_window_slot_get_instance_private (self);
++
++    view = nautilus_window_slot_get_current_view (self);
++    /* If we changed location just to another search location, for example,
++     * when changing the query, just keep the search visible.
++     * Make sure the search is visible though, since we could be returning
++     * from a previous search location when using the history */
++    if (nautilus_view_is_searching (view))
++    {
++        nautilus_window_slot_set_alternative_search_visible (self, TRUE);
++        return;
++    }
++
++    query = nautilus_query_editor_get_query (priv->query_editor);
++    if (query)
++    {
++        /* If the view is not searching, but search is visible, and the
++         * query is empty, we don't hide it. Some users enable the search
++         * and then change locations, then they search. */
++        if (!nautilus_query_is_empty (query))
++        {
++            nautilus_window_slot_set_alternative_search_visible (self, FALSE);
++        }
++    }
++
++    if (priv->pending_search_query)
++    {
++        nautilus_window_slot_search (self, g_object_ref (priv->pending_search_query));
++    }
++}
++
++static void
+ nautilus_window_slot_sync_actions (NautilusWindowSlot *self)
+ {
+     NautilusWindowSlotPrivate *priv;
+@@ -407,6 +453,7 @@
+      * Needs to be done after the change has been done, if not, a loop happens,
+      * because setting the search enabled or not actually opens a location */
+     update_search_visible (self);
++    update_alternative_search_visible (self);
+ 
+     /* Files view mode */
+     action = g_action_map_lookup_action (G_ACTION_MAP (priv->slot_action_group), "files-view-mode");
+@@ -419,9 +466,11 @@
+ 
+ static void
+ query_editor_cancel_callback (NautilusQueryEditor *editor,
+-                              NautilusWindowSlot  *self)
++                              NautilusQueryData *data)
+ {
+-    nautilus_window_slot_set_search_visible (self, FALSE);
++    nautilus_window_slot_set_search_visible (data->self, FALSE);
++    nautilus_window_slot_set_alternative_search_visible (data->self, FALSE);
++    g_free(data);
+ }
+ 
+ static void
+@@ -457,14 +506,16 @@
+ query_editor_changed_callback (NautilusQueryEditor *editor,
+                                NautilusQuery       *query,
+                                gboolean             reload,
+-                               NautilusWindowSlot  *self)
++                               NautilusQueryData   *data)
+ {
+     NautilusView *view;
+ 
+-    view = nautilus_window_slot_get_current_view (self);
++    view = nautilus_window_slot_get_current_view (data->self);
++
++    query->alternative = data->alternative;
+ 
+     nautilus_view_set_search_query (view, query);
+-    nautilus_window_slot_open_location_full (self, nautilus_view_get_location (view), 0, NULL);
++    nautilus_window_slot_open_location_full (data->self, nautilus_view_get_location (view), 0, NULL);
+ }
+ 
+ static void
+@@ -538,10 +589,11 @@
+ }
+ 
+ static void
+-show_query_editor (NautilusWindowSlot *self)
++show_query_editor (NautilusWindowSlot *self, gboolean alternative)
+ {
+     NautilusWindowSlotPrivate *priv;
+     NautilusView *view;
++    NautilusQueryData *data;
+ 
+     priv = nautilus_window_slot_get_instance_private (self);
+     view = nautilus_window_slot_get_current_view (self);
+@@ -549,6 +601,9 @@
+     {
+         return;
+     }
++    data = g_new0 (NautilusQueryData, 1);
++    data->self = self;
++    data->alternative = alternative;
+ 
+     if (nautilus_view_is_searching (view))
+     {
+@@ -568,13 +623,13 @@
+     {
+         priv->qe_changed_id =
+             g_signal_connect (priv->query_editor, "changed",
+-                              G_CALLBACK (query_editor_changed_callback), self);
++                              G_CALLBACK (query_editor_changed_callback), data);
+     }
+     if (priv->qe_cancel_id == 0)
+     {
+         priv->qe_cancel_id =
+             g_signal_connect (priv->query_editor, "cancel",
+-                              G_CALLBACK (query_editor_cancel_callback), self);
++                              G_CALLBACK (query_editor_cancel_callback), data);
+     }
+     if (priv->qe_activated_id == 0)
+     {
+@@ -604,6 +659,20 @@
+     g_action_change_state (action, g_variant_new_boolean (visible));
+ }
+ 
++static void
++nautilus_window_slot_set_alternative_search_visible (NautilusWindowSlot *self,
++                                         gboolean            visible)
++{
++    NautilusWindowSlotPrivate *priv;
++    GAction *action;
++
++    priv = nautilus_window_slot_get_instance_private (self);
++
++    action = g_action_map_lookup_action (G_ACTION_MAP (priv->slot_action_group),
++                                         "alternative-search-visible");
++    g_action_change_state (action, g_variant_new_boolean (visible));
++}
++
+ static gboolean
+ nautilus_window_slot_get_search_visible (NautilusWindowSlot *self)
+ {
+@@ -623,6 +692,25 @@
+     return searching;
+ }
+ 
++static gboolean
++nautilus_window_slot_get_alternative_search_visible (NautilusWindowSlot *self)
++{
++    NautilusWindowSlotPrivate *priv;
++    GAction *action;
++    GVariant *state;
++    gboolean searching;
++
++    priv = nautilus_window_slot_get_instance_private (self);
++    action = g_action_map_lookup_action (G_ACTION_MAP (priv->slot_action_group),
++                                         "alternative-search-visible");
++    state = g_action_get_state (action);
++    searching = g_variant_get_boolean (state);
++
++    g_variant_unref (state);
++
++    return searching;
++}
++
+ void
+ nautilus_window_slot_search (NautilusWindowSlot *self,
+                              NautilusQuery      *query)
+@@ -640,6 +728,7 @@
+     if (view)
+     {
+         nautilus_window_slot_set_search_visible (self, TRUE);
++        nautilus_window_slot_set_alternative_search_visible (self, TRUE);
+         nautilus_query_editor_set_query (priv->query_editor, query);
+     }
+     else
+@@ -681,6 +770,7 @@
+         if (g_variant_get_boolean (state))
+         {
+             nautilus_window_slot_set_search_visible (self, FALSE);
++            nautilus_window_slot_set_alternative_search_visible (self, FALSE);
+         }
+     }
+ 
+@@ -693,6 +783,7 @@
+     if (retval)
+     {
+         nautilus_window_slot_set_search_visible (self, TRUE);
++        nautilus_window_slot_set_alternative_search_visible (self, TRUE);
+     }
+ 
+     return retval;
+@@ -1032,7 +1123,38 @@
+ 
+         if (g_variant_get_boolean (state))
+         {
+-            show_query_editor (self);
++            show_query_editor (self, FALSE);
++            nautilus_window_slot_set_searching (self, TRUE);
++        }
++        else
++        {
++            hide_query_editor (self);
++            nautilus_window_slot_set_searching (self, FALSE);
++        }
++
++        update_search_information (self);
++    }
++
++    g_variant_unref (current_state);
++}
++
++static void
++action_alternative_search_visible (GSimpleAction *action,
++                       GVariant      *state,
++                       gpointer       user_data)
++{
++    NautilusWindowSlot *self;
++    GVariant *current_state;
++
++    self = NAUTILUS_WINDOW_SLOT (user_data);
++    current_state = g_action_get_state (G_ACTION (action));
++    if (g_variant_get_boolean (current_state) != g_variant_get_boolean (state))
++    {
++        g_simple_action_set_state (action, state);
++
++        if (g_variant_get_boolean (state))
++        {
++            show_query_editor (self, TRUE);
+             nautilus_window_slot_set_searching (self, TRUE);
+         }
+         else
+@@ -1118,6 +1240,7 @@
+     { "files-view-mode", NULL, "u", "uint32 4", action_files_view_mode },
+     { "files-view-mode-toggle", action_files_view_mode_toggle },
+     { "search-visible", NULL, NULL, "false", action_search_visible },
++    { "alternative-search-visible", NULL, NULL, "false", action_alternative_search_visible },
+ };
+ 
+ static void
+@@ -1231,6 +1354,7 @@
+     nautilus_application_set_accelerator (app, "slot.files-view-mode(uint32 1)", "<control>1");
+     nautilus_application_set_accelerator (app, "slot.files-view-mode(uint32 0)", "<control>2");
+     nautilus_application_set_accelerator (app, "slot.search-visible", "<control>f");
++    nautilus_application_set_accelerator (app, "slot.alternative-search-visible", "<shift><control>f");
+ 
+     priv->view_mode_before_search = NAUTILUS_VIEW_INVALID_ID;
+ }
+@@ -3149,8 +3273,7 @@
+ 
+     GTK_WIDGET_CLASS (nautilus_window_slot_parent_class)->grab_focus (widget);
+ 
+-    if (nautilus_window_slot_get_search_visible (self))
+-    {
++    if (nautilus_window_slot_get_search_visible (self) || nautilus_window_slot_get_alternative_search_visible (self)) {
+         gtk_widget_grab_focus (GTK_WIDGET (priv->query_editor));
+     }
+     else if (priv->content_view)
+diff '--exclude=.git' -urN a/src/nautilus-window-slot.h b/src/nautilus-window-slot.h
+--- a/src/nautilus-window-slot.h	2018-12-12 09:52:43.000000000 -0600
++++ b/src/nautilus-window-slot.h	2019-04-17 23:00:42.965765512 -0500
+@@ -37,6 +37,8 @@
+ #define NAUTILUS_TYPE_WINDOW_SLOT (nautilus_window_slot_get_type ())
+ G_DECLARE_DERIVABLE_TYPE (NautilusWindowSlot, nautilus_window_slot, NAUTILUS, WINDOW_SLOT, GtkBox)
+ 
++typedef struct NautilusQueryData NautilusQueryData;
++
+ typedef struct
+ {
+     NautilusFile *file;
