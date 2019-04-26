@@ -2,7 +2,7 @@
 
 EAPI="6"
 
-inherit gnome2 meson xdg virtualx
+inherit gnome.org gnome2-utils meson xdg virtualx
 
 DESCRIPTION="GNOME webbrowser based on Webkit"
 HOMEPAGE="https://wiki.gnome.org/Apps/Web"
@@ -14,7 +14,7 @@ KEYWORDS="*"
 IUSE="test"
 
 COMMON_DEPEND="
-	>=dev-libs/glib-2.52.0:2[dbus]
+	>=dev-libs/glib-2.52.0:2
 	>=x11-libs/gtk+-3.22.13:3
 	>=dev-libs/nettle-3.2:=
 	>=net-libs/webkit-gtk-2.21.92:4=
@@ -25,7 +25,7 @@ COMMON_DEPEND="
 	dev-libs/icu:=
 	>=app-text/iso-codes-0.35
 	>=dev-libs/json-glib-1.2.4
-	>=x11-libs/libnotify-0.5.1:=
+	>=x11-libs/libnotify-0.5.1
 	>=app-crypt/libsecret-0.14
 	>=net-libs/libsoup-2.48:2.4
 	>=dev-libs/libxml2-2.6.12:2
@@ -53,7 +53,7 @@ src_configure() {
 		-Ddeveloper_mode=false
 		-Ddistributor_name=Gentoo
 		-Dtech_preview=false
-		-Dunit_tests=$(usex test true false)
+		$(meson_use test unit_tests)
 	)
 	meson_src_configure
 }
@@ -64,12 +64,10 @@ src_test() {
 
 pkg_postinst() {
 	xdg_pkg_postinst
-	gnome2_icon_cache_update
 	gnome2_schemas_update
 }
 
 pkg_postrm() {
 	xdg_pkg_postrm
-	gnome2_icon_cache_update
 	gnome2_schemas_update
 }

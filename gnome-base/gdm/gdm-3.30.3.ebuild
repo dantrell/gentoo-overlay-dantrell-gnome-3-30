@@ -16,7 +16,7 @@ LICENSE="
 	branding? ( CC-BY-SA-4.0 )
 "
 SLOT="0"
-KEYWORDS="~*"
+KEYWORDS="*"
 
 IUSE="accessibility audit branding elogind fprint +introspection ipv6 plymouth selinux smartcard systemd tcpd test wayland xinerama"
 REQUIRED_USE="
