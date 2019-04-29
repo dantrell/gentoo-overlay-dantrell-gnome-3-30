@@ -138,6 +138,10 @@ src_prepare() {
 
 	if ! use wayland; then
 		eapply "${FILESDIR}"/${PN}-3.30.0-prioritize-xorg.patch
+	else
+		# From GNOME:
+		# 	https://gitlab.gnome.org/GNOME/gdm/commit/5cd78602d3d4c8355869151875fc317e8bcd5f08
+		eapply -R "${FILESDIR}"/${PN}-3.30.1-data-disable-wayland-for-proprietary-nvidia-machines.patch
 	fi
 
 	eautoreconf
