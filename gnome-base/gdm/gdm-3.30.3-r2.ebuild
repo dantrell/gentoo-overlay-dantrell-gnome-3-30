@@ -132,7 +132,7 @@ src_prepare() {
 	use branding && eapply "${FILESDIR}"/${PN}-3.30.1-logo.patch
 
 	if use elogind; then
-		eapply "${FILESDIR}"/${PN}-3.24.2-support-elogind.patch
+		eapply "${FILESDIR}"/${PN}-3.30.3-support-elogind.patch
 		eapply "${FILESDIR}"/${PN}-3.24.2-enable-elogind.patch
 	fi
 
@@ -149,39 +149,37 @@ src_prepare() {
 }
 
 src_configure() {
-	local myconf=()
-
 	# PAM is the only auth scheme supported
 	# even though configure lists shadow and crypt
 	# they don't have any corresponding code.
 	# --with-at-spi-registryd-directory= needs to be passed explicitly because
 	# of https://bugzilla.gnome.org/show_bug.cgi?id=607643#c4
 	# Xevie is obsolete, bug #482304
-	# --with-initial-vt=7 conflicts with plymouth, bug #453392
-	! use plymouth && myconf+=( --with-initial-vt=7 )
+	local myconf=(
+		--enable-gdm-xsession
+		--enable-user-display-server
+		--with-run-dir=/run/gdm
+		--localstatedir="${EPREFIX}"/var
+		--disable-static
+		--with-xdmcp=yes
+		--enable-authentication-scheme=pam
+		--with-default-pam-config=exherbo
+		--with-pam-mod-dir=$(getpam_mod_dir)
+		--with-at-spi-registryd-directory="${EPREFIX}"/usr/libexec
+		--without-xevie
+		$(use_enable systemd systemd-journal)
+		--with-systemdsystemunitdir="$(systemd_get_systemunitdir)"
+		$(use_with audit libaudit)
+		$(use_enable ipv6)
+		$(use_with plymouth)
+		$(use_with selinux)
+		$(use_with tcpd tcp-wrappers)
+		$(use_enable wayland wayland-support)
+		$(use_with xinerama)
+		--with-initial-vt=7
+	)
 
-	gnome2_src_configure \
-		--enable-gdm-xsession \
-		--enable-user-display-server \
-		--with-run-dir=/run/gdm \
-		--localstatedir="${EPREFIX}"/var \
-		--disable-static \
-		--with-xdmcp=yes \
-		--enable-authentication-scheme=pam \
-		--with-default-pam-config=exherbo \
-		--with-pam-mod-dir=$(getpam_mod_dir) \
-		--with-at-spi-registryd-directory="${EPREFIX}"/usr/libexec \
-		--with-systemdsystemunitdir="$(systemd_get_systemunitdir)" \
-		--without-xevie \
-		$(use_with audit libaudit) \
-		$(use_enable ipv6) \
-		$(use_with plymouth) \
-		$(use_with selinux) \
-		$(use_enable systemd systemd-journal) \
-		$(use_with tcpd tcp-wrappers) \
-		$(use_enable wayland wayland-support) \
-		$(use_with xinerama) \
-		"${myconf[@]}"
+	gnome2_src_configure "${myconf[@]}"
 }
 
 src_install() {
