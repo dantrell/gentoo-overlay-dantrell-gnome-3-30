@@ -1,0 +1,30 @@
+From c78219b65ff9be4f4588daa8176cab559905e3b5 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Marco=20Trevisan=20=28Trevi=C3=B1o=29?= <mail@3v1n0.net>
+Date: Fri, 17 May 2019 19:46:33 +0000
+Subject: [PATCH] cursor-renderer-native: Free MetaCursorNativePrivate struct
+
+Fix a small leak in native renderer.
+
+https://gitlab.gnome.org/GNOME/mutter/merge_requests/581
+
+
+(cherry picked from commit b016ff29f638b04d1a756b82c461563207083391)
+---
+ src/backends/native/meta-cursor-renderer-native.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/src/backends/native/meta-cursor-renderer-native.c b/src/backends/native/meta-cursor-renderer-native.c
+index 890a0d476..e5f868b40 100644
+--- a/src/backends/native/meta-cursor-renderer-native.c
++++ b/src/backends/native/meta-cursor-renderer-native.c
+@@ -798,6 +798,7 @@ static void
+ cursor_priv_free (MetaCursorNativePrivate *cursor_priv)
+ {
+   g_hash_table_destroy (cursor_priv->gpu_states);
++  g_free (cursor_priv);
+ }
+ 
+ static MetaCursorNativePrivate *
+-- 
+2.20.1
+

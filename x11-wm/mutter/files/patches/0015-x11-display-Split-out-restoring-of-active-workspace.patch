@@ -1,0 +1,151 @@
+From 57e3b67ae1a130649873c2e18faa338999840e44 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Florian=20M=C3=BCllner?= <fmuellner@gnome.org>
+Date: Fri, 1 Mar 2019 12:03:46 +0100
+Subject: [PATCH] x11-display: Split out restoring of active workspace
+
+Splitting out the X11 display initialization from display_open() broke
+restoring the previously active workspace in two ways:
+
+ - when dynamic workspaces are used, the old workspaces haven't
+   been restored yet, so we stay on the first workspace
+
+ - when static workspaces are used, the code tries to access
+   the compositor that hasn't been initialized yet, resulting
+   in a segfault
+
+Fix both those issues by splitting out restoring of the active workspace.
+
+https://gitlab.gnome.org/GNOME/mutter/issues/479
+(cherry picked from commit 7abceb434dedaa2b1f2c7fc20aa2907cd3a041f6)
+---
+ src/core/display.c                 |  5 ++-
+ src/x11/meta-x11-display-private.h |  2 +
+ src/x11/meta-x11-display.c         | 62 ++++++++++++++++++------------
+ 3 files changed, 43 insertions(+), 26 deletions(-)
+
+diff --git a/src/core/display.c b/src/core/display.c
+index f6b4d5b9f..283bd531d 100644
+--- a/src/core/display.c
++++ b/src/core/display.c
+@@ -768,7 +768,10 @@ meta_display_open (void)
+   enable_compositor (display);
+ 
+   if (display->x11_display)
+-    meta_x11_display_create_guard_window (display->x11_display);
++    {
++      meta_x11_display_restore_active_workspace (display->x11_display);
++      meta_x11_display_create_guard_window (display->x11_display);
++    }
+ 
+   /* Set up touch support */
+   display->gesture_tracker = meta_gesture_tracker_new ();
+diff --git a/src/x11/meta-x11-display-private.h b/src/x11/meta-x11-display-private.h
+index fdd642bbc..486da5a57 100644
+--- a/src/x11/meta-x11-display-private.h
++++ b/src/x11/meta-x11-display-private.h
+@@ -157,6 +157,8 @@ struct _MetaX11Display
+ 
+ MetaX11Display *meta_x11_display_new (MetaDisplay *display, GError **error);
+ 
++void meta_x11_display_restore_active_workspace (MetaX11Display *x11_display);
++
+ Window meta_x11_display_create_offscreen_window (MetaX11Display *x11_display,
+                                                  Window          parent,
+                                                  long            valuemask);
+diff --git a/src/x11/meta-x11-display.c b/src/x11/meta-x11-display.c
+index 4a6d64e08..57ee1ebde 100644
+--- a/src/x11/meta-x11-display.c
++++ b/src/x11/meta-x11-display.c
+@@ -1076,8 +1076,6 @@ meta_x11_display_new (MetaDisplay *display, GError **error)
+   Atom wm_sn_atom;
+   char buf[128];
+   guint32 timestamp;
+-  MetaWorkspace *current_workspace;
+-  uint32_t current_workspace_index = 0;
+   Atom atom_restart_helper;
+   Window restart_helper_window = None;
+   GdkDisplay *gdk_display;
+@@ -1283,27 +1281,6 @@ meta_x11_display_new (MetaDisplay *display, GError **error)
+ 
+   meta_x11_display_update_workspace_layout (x11_display);
+ 
+-  /* Get current workspace */
+-  if (meta_prop_get_cardinal (x11_display,
+-                              x11_display->xroot,
+-                              x11_display->atom__NET_CURRENT_DESKTOP,
+-                              &current_workspace_index))
+-    {
+-      meta_verbose ("Read existing _NET_CURRENT_DESKTOP = %d\n",
+-                    (int) current_workspace_index);
+-
+-      /* Switch to the _NET_CURRENT_DESKTOP workspace */
+-      current_workspace = meta_workspace_manager_get_workspace_by_index (display->workspace_manager,
+-                                                                         current_workspace_index);
+-
+-      if (current_workspace != NULL)
+-        meta_workspace_activate (current_workspace, timestamp);
+-    }
+-  else
+-    {
+-      meta_verbose ("No _NET_CURRENT_DESKTOP present\n");
+-    }
+-
+   if (meta_prefs_get_dynamic_workspaces ())
+     {
+       int num = 0;
+@@ -1323,8 +1300,6 @@ meta_x11_display_new (MetaDisplay *display, GError **error)
+           meta_workspace_manager_update_num_workspaces (display->workspace_manager, timestamp, num);
+     }
+ 
+-  set_active_workspace_hint (display->workspace_manager, x11_display);
+-
+   g_signal_connect_object (display->workspace_manager, "active-workspace-changed",
+                            G_CALLBACK (set_active_workspace_hint),
+                            x11_display, 0);
+@@ -1362,6 +1337,43 @@ meta_x11_display_new (MetaDisplay *display, GError **error)
+   return x11_display;
+ }
+ 
++void
++meta_x11_display_restore_active_workspace (MetaX11Display *x11_display)
++{
++  MetaDisplay *display;
++  MetaWorkspace *current_workspace;
++  uint32_t current_workspace_index = 0;
++  guint32 timestamp;
++
++  g_return_if_fail (META_IS_X11_DISPLAY (x11_display));
++
++  display = x11_display->display;
++  timestamp = x11_display->timestamp;
++
++  /* Get current workspace */
++  if (meta_prop_get_cardinal (x11_display,
++                              x11_display->xroot,
++                              x11_display->atom__NET_CURRENT_DESKTOP,
++                              &current_workspace_index))
++    {
++      meta_verbose ("Read existing _NET_CURRENT_DESKTOP = %d\n",
++                    (int) current_workspace_index);
++
++      /* Switch to the _NET_CURRENT_DESKTOP workspace */
++      current_workspace = meta_workspace_manager_get_workspace_by_index (display->workspace_manager,
++                                                                         current_workspace_index);
++
++      if (current_workspace != NULL)
++        meta_workspace_activate (current_workspace, timestamp);
++    }
++  else
++    {
++      meta_verbose ("No _NET_CURRENT_DESKTOP present\n");
++    }
++
++  set_active_workspace_hint (display->workspace_manager, x11_display);
++}
++
+ int
+ meta_x11_display_get_screen_number (MetaX11Display *x11_display)
+ {
+-- 
+2.20.1
+
