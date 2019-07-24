@@ -84,6 +84,8 @@ DEPEND="${RDEPEND}
 PATCHES=(
 	"${FILESDIR}"/${PN}-1.30.2-sysmacros.patch #580234
 	"${FILESDIR}"/rollup #599482
+	# from gnome-3-30 branch, fixes RPATH of libgvfsdaemon.so
+	"${FILESDIR}"/${PN}-1.38.3-gvfsdaemon-rpath.patch
 )
 
 src_configure() {
