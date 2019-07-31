@@ -1,6 +1,8 @@
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI="6"
+VALA_MIN_API_VERSION="0.40"
+VALA_MAX_API_VERSION="0.42"
 
 inherit gnome2 meson vala
 
