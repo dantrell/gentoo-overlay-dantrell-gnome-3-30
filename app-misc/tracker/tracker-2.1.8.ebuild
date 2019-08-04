@@ -2,6 +2,7 @@
 
 EAPI="6"
 PYTHON_COMPAT=( python{3_4,3_5,3_6,3_7} )
+VALA_MAX_API_VERSION="0.42"
 
 inherit bash-completion-r1 gnome2 linux-info python-any-r1 meson vala
 
