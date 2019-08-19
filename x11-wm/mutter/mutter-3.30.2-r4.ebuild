@@ -11,7 +11,7 @@ LICENSE="GPL-2+"
 SLOT="0"
 KEYWORDS="~*"
 
-IUSE="ck debug deprecated-background elogind gles2 input_devices_wacom +introspection systemd test udev +vanilla-mipmapping wayland"
+IUSE="ck debug deprecated-background elogind gles2 input_devices_wacom +introspection screencast systemd test udev +vanilla-mipmapping wayland"
 REQUIRED_USE="
 	?? ( ck elogind systemd )
 	wayland? ( || ( elogind systemd ) )
@@ -58,6 +58,7 @@ COMMON_DEPEND="
 	input_devices_wacom? ( >=dev-libs/libwacom-0.13 )
 	introspection? ( >=dev-libs/gobject-introspection-1.42:= )
 	udev? ( >=virtual/libgudev-232:= )
+	screencast? ( >=media-video/pipewire-0.2.2:0/0.2 )
 	wayland? (
 		>=dev-libs/libinput-1.4
 		>=dev-libs/wayland-1.6.90
@@ -106,7 +107,7 @@ src_prepare() {
 		eapply "${FILESDIR}"/${PN}-3.24.4-metashapedtexture-disable-mipmapping-emulation.patch
 	fi
 
-	eapply "${FILESDIR}"/patches/r3/
+	eapply "${FILESDIR}"/patches/r4/
 
 	eautoreconf
 	gnome2_src_prepare
@@ -140,6 +141,7 @@ src_configure() {
 		$(use_enable gles2)        \
 		$(use_enable gles2 cogl-gles2) \
 		$(use_enable introspection) \
+		$(use_enable screencast remote-desktop) \
 		$(use_enable wayland) \
 		$(use_enable wayland egl-device) \
 		$(use_enable wayland kms-egl-platform) \

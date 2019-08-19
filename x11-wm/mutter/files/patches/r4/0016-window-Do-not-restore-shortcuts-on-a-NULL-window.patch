@@ -1,0 +1,35 @@
+From b2215d896f8f2e68cc648e5c6d1f4e24a48bc5ed Mon Sep 17 00:00:00 2001
+From: Olivier Fourdan <ofourdan@redhat.com>
+Date: Mon, 18 Feb 2019 10:21:57 +0100
+Subject: [PATCH] window: Do not restore shortcuts on a NULL window
+
+The "force restore shortcuts" being triggered by a key-combo, there is
+no guarantee that the currently focused window is actually non-NULL in
+which case we would crash.
+
+Make sure there is a window currently focused before trying to restore
+the shortcuts on that window.
+
+Closes: https://gitlab.gnome.org/GNOME/mutter/issues/464
+(cherry picked from commit 7bd668e6d0081ff4a22617625347e54ca7138819)
+---
+ src/core/keybindings.c | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/src/core/keybindings.c b/src/core/keybindings.c
+index f767c7d6c..110dfb9f9 100644
+--- a/src/core/keybindings.c
++++ b/src/core/keybindings.c
+@@ -3543,6 +3543,9 @@ handle_restore_shortcuts (MetaDisplay     *display,
+ {
+   ClutterInputDevice *source;
+ 
++  if (!display->focus_window)
++    return;
++
+   source = clutter_event_get_source_device ((ClutterEvent *) event);
+ 
+   meta_topic (META_DEBUG_KEYBINDINGS, "Restoring normal keyboard shortcuts\n");
+-- 
+2.20.1
+

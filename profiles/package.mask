@@ -24,6 +24,7 @@ dev-util/devhelp::gentoo
 dev-util/gnome-builder::gentoo
 dev-util/gnome-devel-docs::gentoo
 dev-util/sysprof::gentoo
+dev-vcs/gitg::gentoo
 games-board/gnome-chess::gentoo
 games-board/gnome-mines::gentoo
 games-board/iagno::gentoo
