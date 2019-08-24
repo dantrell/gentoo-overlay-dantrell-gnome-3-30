@@ -1,0 +1,36 @@
+From 43d1640d58244b2438b49d27d744f19e7bcf8d90 Mon Sep 17 00:00:00 2001
+From: Mart Raudsepp <leio@gentoo.org>
+Date: Fri, 14 Dec 2018 20:32:17 +0200
+Subject: [PATCH 3/4] build: disable BWRAP without SECCOMP
+
+BWRAP conditional code isn't wrapped behind SECCOMP conditional, thus
+would try to use bwrap even without seccomp without this change.
+bubblewrap requires seccomp, thus this doesn't make sense (and is
+fixed in meson.build for gnome-desktop-3.31+).
+
+(cherry picked from commit 2114ed68f6be08a5999db03a56fc4bb09e1473c8)
+---
+ configure.ac | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/configure.ac b/configure.ac
+index 871b73f5..08594fe5 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -161,11 +161,11 @@ case $host_os in
+         PKG_CHECK_MODULES(LIBSECCOMP, [libseccomp])
+         SECCOMP_PKG="libseccomp"
+         AC_DEFINE([ENABLE_SECCOMP], [1], [Define if using seccomp])
++        AC_DEFINE_UNQUOTED(_GNU_SOURCE, 1, [Define to include GNU extensions])
++        AC_DEFINE_UNQUOTED(HAVE_BWRAP, 1, [Define to 1 if Bubblewrap support is available])
+         enable_seccomp="yes"
+         ;;
+     esac
+-    AC_DEFINE_UNQUOTED(_GNU_SOURCE, 1, [Define to include GNU extensions])
+-    AC_DEFINE_UNQUOTED(HAVE_BWRAP, 1, [Define to 1 if Bubblewrap support is available])
+     AC_DEFINE_UNQUOTED(INSTALL_PREFIX, "$prefix", [Path to library install prefix])
+     ;;
+ esac
+-- 
+2.20.1
+

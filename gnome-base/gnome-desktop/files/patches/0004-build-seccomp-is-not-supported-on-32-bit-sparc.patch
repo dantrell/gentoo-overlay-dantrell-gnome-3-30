@@ -1,0 +1,26 @@
+From 7f2ec3fe3663624b7246ac04da298613061c59ec Mon Sep 17 00:00:00 2001
+From: Mart Raudsepp <leio@gentoo.org>
+Date: Fri, 14 Dec 2018 23:32:02 +0200
+Subject: [PATCH 4/4] build: seccomp is not supported on 32-bit sparc
+
+(cherry picked from commit fbaec7360d0f121e756746e36cc1277b6039bf67)
+---
+ configure.ac | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/configure.ac b/configure.ac
+index 08594fe5..617d6ece 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -153,7 +153,7 @@ dnl Check for bubblewrap compatible platform
+ case $host_os in
+   linux*)
+     case $host_cpu in
+-      alpha|ia64|m68k|sh4|sparc64)
++      alpha|ia64|m68k|sh4|sparc*)
+         enable_seccomp="no (not available on this architecture)"
+         AC_MSG_WARN("seccomp not available on this architecture")
+         ;;
+-- 
+2.20.1
+

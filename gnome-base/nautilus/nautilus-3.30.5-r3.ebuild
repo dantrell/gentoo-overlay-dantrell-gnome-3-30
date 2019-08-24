@@ -95,15 +95,17 @@ src_prepare() {
 		eapply "${FILESDIR}"/${PN}-3.30.5-support-alternative-search.patch
 	fi
 
+	eapply "${FILESDIR}"/${PN}-3.30.5-docs-build.patch # Always install pregenerated manpage, keeping docs option for gtk-doc
+
 	if ! use vanilla-thumbnailer; then
 		# From GNOME:
 		# 	https://gitlab.gnome.org/GNOME/gnome-desktop/commit/8b1db18aa75c2684b513481088b4e289b5c8ed92
 		# 	https://gitlab.gnome.org/GNOME/nautilus/commit/673c81cf9f1d68b71041220e6e44624dee44dbfc
 		eapply "${FILESDIR}"/${PN}-3.30.0-dont-sandbox-thumbnailers-on-linux.patch
 	else
-		# From Gentoo:
-		# 	https://bugs.gentoo.org/654096
-		eapply "${FILESDIR}"/${PN}-3.26.2-load-ld-so-cache.patch
+		eapply "${FILESDIR}"/${PN}-3.30.5-thumbnailer-updates{,2}.patch # syncs with gnome-desktop; fixes the ld.so.cache for us
+		eapply "${FILESDIR}"/${PN}-3.30.5-seccomp-sparc32.patch # 32-bit sparc doesn't have seccomp either
+		eapply "${FILESDIR}"/${PN}-3.30.5-CVE-2019-11461.patch
 	fi
 
 	eapply_user

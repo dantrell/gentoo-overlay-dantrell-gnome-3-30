@@ -2,7 +2,7 @@
 
 EAPI="6"
 
-inherit gnome2 virtualx
+inherit autotools gnome2 virtualx
 
 DESCRIPTION="Libraries for the gnome desktop that are not part of the UI"
 HOMEPAGE="https://gitlab.gnome.org/GNOME/gnome-desktop"
@@ -49,12 +49,15 @@ DEPEND="${COMMON_DEPEND}
 # Includes X11/Xatom.h in libgnome-desktop/gnome-bg.c which comes from xproto
 
 src_prepare() {
+	eapply "${FILESDIR}"/patches/ # Requires eautoreconf. https://gitlab.gnome.org/Community/gentoo/gnome-desktop/compare/3.30.2.3...gentoo-3.30.2.3
+
 	if ! use vanilla-thumbnailer; then
 		# From GNOME:
 		# 	https://gitlab.gnome.org/GNOME/gnome-desktop/commit/8b1db18aa75c2684b513481088b4e289b5c8ed92
 		eapply "${FILESDIR}"/${PN}-3.30.2.3-dont-sandbox-thumbnailers-on-linux.patch
 	fi
 
+	eautoreconf
 	gnome2_src_prepare
 }
 

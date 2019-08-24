@@ -1,0 +1,183 @@
+From bb44c579b295a9c94065a0339674a11c727cb2e5 Mon Sep 17 00:00:00 2001
+From: Jeremy Soller <jeremy@system76.com>
+Date: Tue, 11 Jun 2019 21:25:26 +0000
+Subject: [PATCH 1/4] Use connector_type from mutter to fix detection of
+ builtin display on NVIDIA
+
+(cherry picked from commit f5449adb5c25c60cbd1745eb8ae9ca06c283cde0)
+
+(cherry picked from commit 845a2b6eda14c0a979905b42575b3b59f9b79270)
+---
+ libgnome-desktop/gnome-rr-config.c      |  6 +++---
+ libgnome-desktop/gnome-rr-output-info.c |  2 ++
+ libgnome-desktop/gnome-rr-private.h     |  5 +++--
+ libgnome-desktop/gnome-rr.c             | 27 ++++++++++++++++---------
+ 4 files changed, 26 insertions(+), 14 deletions(-)
+
+diff --git a/libgnome-desktop/gnome-rr-config.c b/libgnome-desktop/gnome-rr-config.c
+index 707df697..396f1f4d 100644
+--- a/libgnome-desktop/gnome-rr-config.c
++++ b/libgnome-desktop/gnome-rr-config.c
+@@ -163,6 +163,7 @@ gnome_rr_config_load_current (GnomeRRConfig *config, GError **error)
+ 	output->priv->name = g_strdup (gnome_rr_output_get_name (rr_output));
+ 	output->priv->connected = TRUE;
+ 	output->priv->display_name = g_strdup (gnome_rr_output_get_display_name (rr_output));
++	output->priv->connector_type = g_strdup (_gnome_rr_output_get_connector_type (rr_output));
+ 	output->priv->config = config;
+ 	output->priv->is_tiled = _gnome_rr_output_get_tile_info (rr_output,
+ 								 &output->priv->tile);
+@@ -438,6 +439,7 @@ make_outputs (GnomeRRConfig *config)
+ 
+         new->priv->name = g_strdup (old->priv->name);
+         new->priv->display_name = g_strdup (old->priv->display_name);
++        new->priv->connector_type = g_strdup (old->priv->connector_type);
+         new->priv->vendor = g_strdup (old->priv->vendor);
+         new->priv->product = g_strdup (old->priv->product);
+         new->priv->serial = g_strdup (old->priv->serial);
+@@ -592,9 +594,7 @@ gnome_rr_config_ensure_primary (GnomeRRConfig *configuration)
+                         top_left = info;
+                 }
+                 if (builtin_display == NULL
+-                    && _gnome_rr_output_name_is_builtin_display (info->priv->name)) {
+-                        /* shame we can't find the connector type
+-                           as with gnome_rr_output_is_builtin_display */
++                    && _gnome_rr_output_connector_type_is_builtin_display (info->priv->connector_type)) {
+                         builtin_display = info;
+                 }
+         }
+diff --git a/libgnome-desktop/gnome-rr-output-info.c b/libgnome-desktop/gnome-rr-output-info.c
+index 7f97ecc1..08e9b45e 100644
+--- a/libgnome-desktop/gnome-rr-output-info.c
++++ b/libgnome-desktop/gnome-rr-output-info.c
+@@ -40,6 +40,7 @@ gnome_rr_output_info_init (GnomeRROutputInfo *self)
+     self->priv->on = FALSE;
+     self->priv->rotation = GNOME_RR_ROTATION_0;
+     self->priv->display_name = NULL;
++    self->priv->connector_type = NULL;
+ }
+ 
+ static void
+@@ -49,6 +50,7 @@ gnome_rr_output_info_finalize (GObject *gobject)
+ 
+     g_free (self->priv->name);
+     g_free (self->priv->display_name);
++    g_free (self->priv->connector_type);
+     g_free (self->priv->product);
+     g_free (self->priv->serial);
+     g_free (self->priv->vendor);
+diff --git a/libgnome-desktop/gnome-rr-private.h b/libgnome-desktop/gnome-rr-private.h
+index e721e39c..36ad7767 100644
+--- a/libgnome-desktop/gnome-rr-private.h
++++ b/libgnome-desktop/gnome-rr-private.h
+@@ -86,6 +86,7 @@ struct _GnomeRROutputInfoPrivate
+     int			pref_width;
+     int			pref_height;
+     char *		display_name;
++    char *		connector_type;
+     gboolean            primary;
+     gboolean            underscanning;
+ 
+@@ -105,7 +106,7 @@ struct _GnomeRRConfigPrivate
+   GnomeRROutputInfo **outputs;
+ };
+ 
+-gboolean _gnome_rr_output_name_is_builtin_display (const char *name);
++gboolean _gnome_rr_output_connector_type_is_builtin_display (const char *connector_type);
+ 
+ gboolean _gnome_rr_screen_apply_configuration (GnomeRRScreen  *screen,
+ 					       gboolean        persistent,
+@@ -113,7 +114,7 @@ gboolean _gnome_rr_screen_apply_configuration (GnomeRRScreen  *screen,
+ 					       GVariant       *outputs,
+ 					       GError        **error);
+ 
+-
++const char * _gnome_rr_output_get_connector_type  (GnomeRROutput         *output);
+ gboolean    _gnome_rr_output_get_tile_info      (GnomeRROutput         *output,
+ 						GnomeRRTile *tile);
+ gboolean    _gnome_rr_output_get_tiled_display_size (GnomeRROutput *output,
+diff --git a/libgnome-desktop/gnome-rr.c b/libgnome-desktop/gnome-rr.c
+index dca50694..6a7bcfbb 100644
+--- a/libgnome-desktop/gnome-rr.c
++++ b/libgnome-desktop/gnome-rr.c
+@@ -64,6 +64,7 @@ struct GnomeRROutput
+     
+     char *		name;
+     char *		display_name;
++    char *      connector_type;
+     GnomeRRCrtc *	current_crtc;
+     GnomeRRCrtc **	possible_crtcs;
+     GnomeRROutput **	clones;
+@@ -1402,6 +1403,7 @@ output_initialize (GnomeRROutput *output, GVariant *info)
+     g_variant_lookup (properties, "width-mm", "i", &output->width_mm);
+     g_variant_lookup (properties, "height-mm", "i", &output->height_mm);
+     g_variant_lookup (properties, "display-name", "s", &output->display_name);
++    g_variant_lookup (properties, "connector-type", "s", &output->connector_type);
+     g_variant_lookup (properties, "backlight", "i", &output->backlight);
+     g_variant_lookup (properties, "min-backlight-step", "i", &output->min_backlight_step);
+     g_variant_lookup (properties, "primary", "b", &output->is_primary);
+@@ -1448,6 +1450,7 @@ output_copy (const GnomeRROutput *from)
+     output->info = from->info;
+     output->name = g_strdup (from->name);
+     output->display_name = g_strdup (from->display_name);
++    output->connector_type = g_strdup (from->connector_type);
+     output->vendor = g_strdup (from->vendor);
+     output->product = g_strdup (from->product);
+     output->serial = g_strdup (from->serial);
+@@ -1495,6 +1498,7 @@ output_free (GnomeRROutput *output)
+     g_free (output->product);
+     g_free (output->serial);
+     g_free (output->display_name);
++    g_free (output->connector_type);
+     g_free (output->edid_file);
+     if (output->edid)
+       g_bytes_unref (output->edid);
+@@ -1678,17 +1682,14 @@ gnome_rr_output_get_possible_crtcs (GnomeRROutput *output)
+ }
+ 
+ gboolean
+-_gnome_rr_output_name_is_builtin_display (const char *name)
++_gnome_rr_output_connector_type_is_builtin_display (const char *connector_type)
+ {
+-    if (!name)
++    if (!connector_type)
+         return FALSE;
+ 
+-    if (strstr (name, "lvds") ||  /* Most drivers use an "LVDS" prefix... */
+-	strstr (name, "LVDS") ||
+-	strstr (name, "Lvds") ||
+-	strstr (name, "LCD")  ||  /* ... but fglrx uses "LCD" in some versions.  Shoot me now, kthxbye. */
+-	strstr (name, "eDP")  ||    /* eDP is for internal built-in panel connections */
+-	strstr (name, "DSI"))
++    if (strcmp (connector_type, "LVDS") == 0 ||
++	strcmp (connector_type, "eDP") == 0  ||
++	strcmp (connector_type, "DSI") == 0)
+         return TRUE;
+ 
+     return FALSE;
+@@ -1699,7 +1700,7 @@ gnome_rr_output_is_builtin_display (GnomeRROutput *output)
+ {
+     g_return_val_if_fail (output != NULL, FALSE);
+ 
+-    return _gnome_rr_output_name_is_builtin_display (output->name);
++    return _gnome_rr_output_connector_type_is_builtin_display (output->connector_type);
+ }
+ 
+ /**
+@@ -2244,6 +2245,14 @@ gnome_rr_output_supports_underscanning (GnomeRROutput *output)
+     return output->supports_underscanning;
+ }
+ 
++const char *
++_gnome_rr_output_get_connector_type (GnomeRROutput *output)
++{
++    g_return_val_if_fail (output != NULL, NULL);
++
++    return output->connector_type;
++}
++
+ gboolean
+ _gnome_rr_output_get_tile_info (GnomeRROutput *output,
+ 				GnomeRRTile *tile)
+-- 
+2.20.1
+

@@ -1,0 +1,28 @@
+From a921024a34c88c7e7ad870a5887f4e52b3a88bdc Mon Sep 17 00:00:00 2001
+From: Bastien Nocera <hadess@hadess.net>
+Date: Tue, 11 Dec 2018 09:06:55 +0100
+Subject: [PATCH 2/4] README: Mention bwrap non-optional requirement
+
+Closes: #82
+(cherry picked from commit 9aa3ec78855503880a0f904325d773d991fa9504)
+---
+ README | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/README b/README
+index 7bf0dfed..48d63ddf 100644
+--- a/README
++++ b/README
+@@ -27,6 +27,9 @@ See the file 'INSTALL'. If you are not using a released version of
+ gnome-desktop (for example, if you checked out the code from git), you
+ first need to run './autogen.sh'.
+ 
++Bubblewrap, installed as the bwrap binary, is a non-optional dependency
++on platforms where it is supported and thumbnailing will silently fail
++when it is not installed at runtime.
+ 
+ How to report bugs
+ ==================
+-- 
+2.20.1
+
