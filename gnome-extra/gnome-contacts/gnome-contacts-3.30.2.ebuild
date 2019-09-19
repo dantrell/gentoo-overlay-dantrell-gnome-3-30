@@ -20,7 +20,7 @@ VALA_DEPEND="
 	dev-libs/folks[vala(+)]
 	gnome-base/gnome-desktop:3=[introspection]
 	net-libs/gnome-online-accounts:=[vala]
-	gnome-extra/evolution-data-server[vala]
+	gnome-extra/evolution-data-server[gtk,vala]
 	net-libs/telepathy-glib[vala]
 "
 # Configure is wrong; it needs cheese-3.5.91, not 3.3.91

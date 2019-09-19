@@ -17,7 +17,7 @@ IUSE=""
 RDEPEND="
 	>=dev-libs/glib-2.43.4:2
 	>=x11-libs/gtk+-3.21.6:3
-	>=gnome-extra/evolution-data-server-3.17.1:=
+	>=gnome-extra/evolution-data-server-3.17.1:=[gtk]
 	>=dev-libs/libical-1.0.1:0=
 	net-libs/libsoup:2.4
 	>=dev-libs/libdazzle-3.26.1
