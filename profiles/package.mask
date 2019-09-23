@@ -61,6 +61,7 @@ gnome-extra/gnome-documents::gentoo
 gnome-extra/gnome-getting-started-docs::gentoo
 gnome-extra/gnome-multi-writer::gentoo
 gnome-extra/gnome-packagekit::gentoo
+gnome-extra/gnome-power-manager::gentoo
 gnome-extra/gnome-shell-extensions::gentoo
 gnome-extra/gnome-shell-frippery::gentoo
 gnome-extra/gnome-software::gentoo
