@@ -1,9 +1,10 @@
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI="6"
-VALA_MIN_API_VERSION="0.36"
+VALA_MIN_API_VERSION="0.40"
+VALA_MAX_API_VERSION="0.44"
 
-inherit gnome2 vala meson
+inherit gnome.org gnome2-utils meson vala xdg
 
 DESCRIPTION="Play the classic two-player boardgame of chess"
 HOMEPAGE="https://wiki.gnome.org/Apps/Chess"
@@ -16,8 +17,8 @@ IUSE="+engines"
 
 RDEPEND="
 	>=dev-libs/glib-2.40:2
-	>=gnome-base/librsvg-2.32:2[vala]
-	>=x11-libs/gtk+-3.19:3
+	>=x11-libs/gtk+-3.19.0:3
+	>=gnome-base/librsvg-2.32.0:2[vala]
 	engines? (
 		games-board/crafty
 		games-board/gnuchess
@@ -27,13 +28,23 @@ RDEPEND="
 "
 DEPEND="${RDEPEND}
 	$(vala_depend)
-	app-text/yelp-tools
+	dev-util/itstool
 	dev-libs/appstream-glib
 	>=sys-devel/gettext-0.19.8
 	virtual/pkgconfig
 "
 
 src_prepare() {
+	xdg_src_prepare
 	vala_src_prepare
-	gnome2_src_prepare
+}
+
+pkg_postinst() {
+	xdg_pkg_postinst
+	gnome2_schemas_update
+}
+
+pkg_postrm() {
+	xdg_pkg_postrm
+	gnome2_schemas_update
 }
