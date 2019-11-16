@@ -27,7 +27,7 @@ RDEPEND="
 	>sys-apps/dbus-1.3.1
 	>=sys-libs/libseccomp-2.0
 
-	cue? ( media-libs/libcue )
+	cue? ( media-libs/libcue:= )
 	enca? ( >=app-i18n/enca-1.9:= )
 	!enca? ( >=dev-libs/icu-4.8.1.1:= )
 	exif? ( >=media-libs/libexif-0.6 )
