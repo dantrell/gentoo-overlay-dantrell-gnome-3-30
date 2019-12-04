@@ -9,7 +9,7 @@ HOMEPAGE="https://gitlab.gnome.org/GNOME/mutter/"
 
 LICENSE="GPL-2+"
 SLOT="0"
-KEYWORDS="~*"
+KEYWORDS="*"
 
 IUSE="ck debug deprecated-background elogind gles2 input_devices_wacom +introspection screencast systemd test udev +vanilla-mipmapping wayland"
 REQUIRED_USE="
@@ -108,6 +108,8 @@ src_prepare() {
 	fi
 
 	eapply "${FILESDIR}"/patches/r4/
+
+	eapply "${FILESDIR}"/${PN}-3.24.4-eglmesaext-include.patch
 
 	eautoreconf
 	gnome2_src_prepare
