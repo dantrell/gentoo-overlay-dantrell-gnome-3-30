@@ -15,6 +15,8 @@ KEYWORDS=""
 
 IUSE="elibc_glibc icu kernel_linux networkmanager stemmer systemd test upower"
 
+RESTRICT="!test? ( test )"
+
 # According to NEWS, introspection is non-optional
 # glibc-2.12 needed for SCHED_IDLE (see bug #385003)
 # sqlite-3.9.0 for FTS5 support
