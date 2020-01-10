@@ -1,7 +1,7 @@
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI="6"
-PYTHON_COMPAT=( python{3_5,3_6,3_7,3_8} )
+PYTHON_COMPAT=( python{3_6,3_7,3_8} )
 VALA_MAX_API_VERSION="0.42"
 
 inherit bash-completion-r1 gnome2 linux-info python-any-r1 meson vala

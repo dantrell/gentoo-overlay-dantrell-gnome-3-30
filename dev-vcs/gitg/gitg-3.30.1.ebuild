@@ -1,7 +1,7 @@
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI="6"
-PYTHON_COMPAT=( python{3_5,3_6,3_7,3_8} )
+PYTHON_COMPAT=( python{3_6,3_7,3_8} )
 VALA_MIN_API_VERSION="0.32" # Needed when gtk+-3.20 is found
 VALA_MAX_API_VERSION="0.42"
 
