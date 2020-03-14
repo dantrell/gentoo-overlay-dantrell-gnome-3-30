@@ -63,7 +63,7 @@ RDEPEND="
 		>=app-text/gspell-1.2.0
 		>=app-text/enchant-2:2=
 	)
-	sysprof? ( >=dev-util/sysprof-3.30.2[gtk] )
+	sysprof? ( >=dev-util/sysprof-3.30.2:0/0[gtk] )
 	vala? (
 		dev-lang/vala:=
 		$(vala_depend)
