@@ -49,7 +49,7 @@ src_configure() {
 		--disable-static \
 		--enable-bz2 \
 		--enable-lzma \
-		APPSTREAM_UTIL=""
+		APPSTREAM_UTIL=$(type -P true)
 }
 
 src_install() {
