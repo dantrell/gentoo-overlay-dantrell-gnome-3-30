@@ -4,14 +4,14 @@ EAPI="6"
 
 inherit gnome2 meson vala
 
-DESCRIPTION="Tracker miners and metadata extractors"
+DESCRIPTION="Collection of data extractors for Tracker/Nepomuk"
 HOMEPAGE="https://wiki.gnome.org/Projects/Tracker"
 
 LICENSE="GPL-2+ LGPL-2.1+"
 SLOT="0"
 KEYWORDS=""
 
-IUSE="cue enca exif ffmpeg flac gif gsf gstreamer iptc +iso +jpeg libav
+IUSE="cue enca exif ffmpeg flac gif gsf gstreamer iptc +iso +jpeg
 +miner-fs mp3 pdf playlist png rss systemd test +tiff upnp-av upower
 +vorbis +xml xmp xps"
 REQUIRED_USE="
@@ -31,10 +31,7 @@ RDEPEND="
 	enca? ( >=app-i18n/enca-1.9:= )
 	!enca? ( >=dev-libs/icu-4.8.1.1:= )
 	exif? ( >=media-libs/libexif-0.6 )
-	ffmpeg? (
-		libav? ( media-video/libav:= )
-		!libav? ( media-video/ffmpeg:0= )
-	)
+	ffmpeg? ( media-video/ffmpeg:0= )
 	flac? ( >=media-libs/flac-1.2.1 )
 	gif? ( media-libs/giflib:= )
 	gsf? ( >=gnome-extra/libgsf-1.14.24:0= )
