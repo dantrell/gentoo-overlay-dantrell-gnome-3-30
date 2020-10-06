@@ -1,14 +1,14 @@
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI="6"
-PYTHON_COMPAT=( python{2_7,3_6,3_7,3_8} )
+PYTHON_COMPAT=( python{2_7,3_6,3_7,3_8,3_9} )
 
 inherit meson python-r1 virtualx versionator
 
 MY_PV=$(get_version_component_range 1-2)
 
 DESCRIPTION="Python bindings for GObject Introspection"
-HOMEPAGE="https://wiki.gnome.org/Projects/PyGObject"
+HOMEPAGE="https://pygobject.readthedocs.io/"
 SRC_URI="https://download.gnome.org/sources/${PN}/${MY_PV}/${P}.tar.xz"
 
 LICENSE="LGPL-2.1+"

@@ -1,7 +1,7 @@
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI="7"
-PYTHON_COMPAT=( python{3_6,3_7,3_8} )
+PYTHON_COMPAT=( python{3_6,3_7,3_8,3_9} )
 VALA_MIN_API_VERSION="0.36"
 DISABLE_AUTOFORMATTING=1
 FORCE_PRINT_ELOG=1
@@ -58,7 +58,7 @@ RDEPEND="
 	${PYTHON_DEPS}
 	clang? ( sys-devel/clang:= )
 	devhelp? ( >=dev-util/devhelp-3.25.1:= )
-	glade? ( dev-util/glade )
+	glade? ( >=dev-util/glade-3.22.0:3.10= )
 	spell? (
 		>=app-text/gspell-1.2.0
 		>=app-text/enchant-2:2=
