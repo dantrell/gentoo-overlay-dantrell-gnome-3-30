@@ -3,7 +3,7 @@
 EAPI="6"
 GNOME2_LA_PUNT="yes"
 
-inherit gnome2 meson multilib-minimal
+inherit flag-o-matic gnome2 meson multilib-minimal
 
 DESCRIPTION="Gtk module for bridging AT-SPI to Atk"
 HOMEPAGE="https://wiki.gnome.org/Accessibility"
@@ -38,6 +38,9 @@ src_prepare() {
 }
 
 multilib_src_configure() {
+	# Work around -fno-common (GCC 10 default)
+	append-flags -fcommon
+
 	local emesonargs=(
 		-D disable_p2p=true
 	)

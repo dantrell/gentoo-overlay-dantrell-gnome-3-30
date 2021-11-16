@@ -35,7 +35,7 @@ RDEPEND="
 	elibc_glibc? ( >=sys-libs/glibc-2.12 )
 	kernel_linux? ( >=sys-libs/libseccomp-2.0.0 )
 	networkmanager? ( >=net-misc/networkmanager-0.8:= )
-	stemmer? ( dev-libs/snowball-stemmer )
+	stemmer? ( dev-libs/snowball-stemmer:= )
 	systemd? ( sys-apps/systemd )
 	upower? ( 
 		>=sys-power/upower-0.9:=
