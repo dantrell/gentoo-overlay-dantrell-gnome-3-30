@@ -9,7 +9,7 @@ HOMEPAGE="https://wiki.gnome.org/Apps/Disks"
 
 LICENSE="GPL-2+"
 SLOT="0"
-KEYWORDS="~*"
+KEYWORDS="*"
 
 IUSE="fat elogind gnome systemd"
 REQUIRED_USE="?? ( elogind systemd )"

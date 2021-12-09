@@ -39,7 +39,7 @@ RDEPEND="
 	systemd? ( sys-apps/systemd )
 	upower? ( 
 		>=sys-power/upower-0.9:=
-		app-misc/tracker-miners[upower]
+		app-misc/tracker-miners:0=[upower]
 	)
 "
 DEPEND="${RDEPEND}

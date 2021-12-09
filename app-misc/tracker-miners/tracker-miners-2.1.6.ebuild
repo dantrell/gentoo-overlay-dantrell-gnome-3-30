@@ -22,7 +22,7 @@ REQUIRED_USE="
 "
 
 RDEPEND="
-	>=app-misc/tracker-2.1.4
+	>=app-misc/tracker-2.1.4:0=
 	>=dev-libs/glib-2.40:2
 	>sys-apps/dbus-1.3.1
 	>=sys-libs/libseccomp-2.0
