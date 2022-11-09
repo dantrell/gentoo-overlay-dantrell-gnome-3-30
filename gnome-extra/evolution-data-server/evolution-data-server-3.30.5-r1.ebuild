@@ -7,14 +7,14 @@ VALA_USE_DEPEND="vapigen"
 inherit cmake-utils db-use flag-o-matic gnome2 systemd vala virtualx
 
 DESCRIPTION="Evolution groupware backend"
-HOMEPAGE="https://wiki.gnome.org/Apps/Evolution"
+HOMEPAGE="https://wiki.gnome.org/Apps/Evolution https://gitlab.gnome.org/GNOME/evolution-data-server"
 
 # Note: explicitly "|| ( LGPL-2 LGPL-3 )", not "LGPL-2+".
 LICENSE="|| ( LGPL-2 LGPL-3 ) BSD Sleepycat"
 SLOT="0/62" # subslot = libcamel-1.2 soname version
 KEYWORDS="*"
 
-IUSE="api-doc-extras +berkdb +gnome-online-accounts +gtk google +introspection ipv6 ldap kerberos vala +weather"
+IUSE="api-doc-extras +berkdb +gnome-online-accounts +gtk google +introspection ldap kerberos vala +weather"
 REQUIRED_USE="vala? ( introspection )"
 
 # Some tests fail due to missing locales.
@@ -25,7 +25,7 @@ RESTRICT="test"
 # gdata-0.17.7 soft required for google tasks (more than 100)
 # berkdb needed only for migrating old addressbook data from <3.13 versions, bug #519512
 RDEPEND="
-	>=app-crypt/gcr-3.4
+	>=app-crypt/gcr-3.4:0=
 	>=app-crypt/libsecret-0.5[crypt]
 	>=dev-db/sqlite-3.7.17:=
 	>=dev-libs/glib-2.46:2
@@ -42,7 +42,7 @@ RDEPEND="
 
 	berkdb? ( >=sys-libs/db-4:= )
 	gtk? (
-		>=app-crypt/gcr-3.4[gtk]
+		>=app-crypt/gcr-3.4:0=[gtk]
 		>=x11-libs/gtk+-3.10:3
 	)
 	google? (
@@ -98,7 +98,7 @@ src_configure() {
 		-DENABLE_GOA=$(usex gnome-online-accounts)
 		-DENABLE_UOA=OFF
 		-DWITH_LIBDB=$(usex berkdb "${EPREFIX}"/usr "OFF")
-		-DENABLE_IPV6=$(usex ipv6)
+		-DENABLE_IPV6=ON
 		-DENABLE_WEATHER=$(usex weather)
 		-DENABLE_GOOGLE=$(usex google)
 		-DENABLE_LARGEFILE=ON

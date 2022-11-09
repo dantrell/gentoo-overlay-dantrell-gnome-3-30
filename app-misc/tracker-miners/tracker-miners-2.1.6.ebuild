@@ -41,7 +41,7 @@ RDEPEND="
 	)
 	iptc? ( media-libs/libiptcdata )
 	iso? ( >=sys-libs/libosinfo-0.2.9:= )
-	jpeg? ( virtual/jpeg:0 )
+	jpeg? ( media-libs/libjpeg-turbo:0= )
 	upower? ( >=sys-power/upower-0.9:=[introspection] )
 	mp3? ( >=media-libs/taglib-1.6 )
 	pdf? ( >app-text/poppler-0.16.0[introspection] )

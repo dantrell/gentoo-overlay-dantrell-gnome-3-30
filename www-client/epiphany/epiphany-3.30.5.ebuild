@@ -5,7 +5,7 @@ EAPI="6"
 inherit gnome.org gnome2-utils meson xdg virtualx
 
 DESCRIPTION="GNOME webbrowser based on Webkit"
-HOMEPAGE="https://wiki.gnome.org/Apps/Web"
+HOMEPAGE="https://wiki.gnome.org/Apps/Web https://gitlab.gnome.org/GNOME/epiphany"
 
 LICENSE="GPL-3+"
 SLOT="0"
@@ -22,7 +22,7 @@ COMMON_DEPEND="
 	>=net-libs/webkit-gtk-2.21.92:4=
 	>=x11-libs/cairo-1.2
 	>=dev-libs/libdazzle-3.28.0
-	>=app-crypt/gcr-3.5.5:=[gtk]
+	>=app-crypt/gcr-3.5.5:0=[gtk]
 	>=x11-libs/gdk-pixbuf-2.36.5:2
 	dev-libs/icu:=
 	>=app-text/iso-codes-0.35
