@@ -49,7 +49,7 @@ RDEPEND="
 	png? ( >=media-libs/libpng-0.89:0= )
 	rss? ( >=net-libs/libgrss-0.7:0 )
 	systemd? ( sys-apps/systemd )
-	tiff? ( media-libs/tiff:0 )
+	tiff? ( media-libs/tiff:= )
 	upnp-av? ( >=media-libs/gupnp-dlna-0.9.4:2.0 )
 	vorbis? ( >=media-libs/libvorbis-0.22 )
 	xml? ( >=dev-libs/libxml2-2.6 )

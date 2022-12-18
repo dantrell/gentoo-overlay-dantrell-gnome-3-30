@@ -1,0 +1,12 @@
+diff '--exclude=.git' -urN a/gi/pygi-python-compat.h b/gi/pygi-python-compat.h
+--- a/gi/pygi-python-compat.h	2019-01-20 03:52:42.000000000 -0600
++++ b/gi/pygi-python-compat.h	2022-11-28 09:09:13.487821000 -0600
+@@ -150,7 +150,7 @@
+ #define PYGLIB_PyUnicode_Check PyUnicode_Check
+ #define PYGLIB_PyUnicode_AsString _PyUnicode_AsString
+ #define PYGLIB_PyUnicode_AsStringAndSize(obj, buf, size) \
+-    (((*(buf) = _PyUnicode_AsStringAndSize(obj, size)) != NULL) ? 0 : -1) 
++    (((*(buf) = PyUnicode_AsUTF8AndSize(obj, size)) != NULL) ? 0 : -1) 
+ #define PYGLIB_PyUnicode_FromString PyUnicode_FromString
+ #define PYGLIB_PyUnicode_FromStringAndSize PyUnicode_FromStringAndSize
+ #define PYGLIB_PyUnicode_FromFormat PyUnicode_FromFormat

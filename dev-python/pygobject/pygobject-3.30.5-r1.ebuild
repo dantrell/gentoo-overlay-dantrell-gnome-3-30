@@ -33,6 +33,12 @@ DEPEND="${COMMON_DEPEND}
 	cairo? ( x11-libs/cairo[glib] )
 "
 
+PATCHES=(
+	# From Red Hat:
+	# 	https://bugzilla.redhat.com/show_bug.cgi?id=1900494
+	"${FILESDIR}"/${PN}-3.30.5-remove-usage-of-pyunicode-asstringandsize-no-longer-available-in-py3-10.patch
+)
+
 src_configure() {
 	:
 }
