@@ -12,7 +12,7 @@ LICENSE="|| ( LGPL-2 LGPL-3 ) BSD Sleepycat"
 SLOT="0/62" # subslot = libcamel-1.2 soname version
 KEYWORDS="*"
 
-IUSE="+berkdb +gnome-online-accounts +gtk gtk-doc +introspection ldap kerberos oauth vala +weather"
+IUSE="berkdb +gnome-online-accounts +gtk gtk-doc +introspection ldap kerberos oauth vala +weather"
 REQUIRED_USE="vala? ( introspection )"
 
 # Some tests fail due to missing locales.
