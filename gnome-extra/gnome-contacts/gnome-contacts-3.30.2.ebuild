@@ -49,7 +49,7 @@ DEPEND="${RDEPEND}
 
 src_prepare() {
 	# From GNOME:
-	# 	https://gitlab.gnome.org/GNOME/gnome-contacts/commit/1b738cec18c159a71334f6563ad0f197e675d2cb
+	# 	https://gitlab.gnome.org/GNOME/gnome-contacts/-/commit/1b738cec18c159a71334f6563ad0f197e675d2cb
 	eapply "${FILESDIR}"/${PN}-9999-fix-the-valadoc-build.patch
 
 	vala_src_prepare

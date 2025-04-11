@@ -36,7 +36,7 @@ COMMON_DEPEND="
 	x11-libs/libXext
 	x11-libs/libXrender
 
-	doc? ( >=dev-util/gtk-doc-am-1.10 )
+	doc? ( >=dev-build/gtk-doc-am-1.10 )
 	introspection? ( >=dev-libs/gobject-introspection-0.6.4:= )
 	selinux? ( >=sys-libs/libselinux-2 )
 	vanilla-thumbnailer? ( sys-apps/bubblewrap )
@@ -98,8 +98,8 @@ src_prepare() {
 
 	if ! use vanilla-thumbnailer; then
 		# From GNOME:
-		# 	https://gitlab.gnome.org/GNOME/gnome-desktop/commit/8b1db18aa75c2684b513481088b4e289b5c8ed92
-		# 	https://gitlab.gnome.org/GNOME/nautilus/commit/673c81cf9f1d68b71041220e6e44624dee44dbfc
+		# 	https://gitlab.gnome.org/GNOME/gnome-desktop/-/commit/8b1db18aa75c2684b513481088b4e289b5c8ed92
+		# 	https://gitlab.gnome.org/GNOME/nautilus/-/commit/673c81cf9f1d68b71041220e6e44624dee44dbfc
 		eapply "${FILESDIR}"/${PN}-3.30.0-dont-sandbox-thumbnailers-on-linux.patch
 	else
 		eapply "${FILESDIR}"/${PN}-3.30.5-thumbnailer-updates{,2}.patch # syncs with gnome-desktop; fixes the ld.so.cache for us

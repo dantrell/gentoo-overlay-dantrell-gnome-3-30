@@ -2,7 +2,7 @@
 
 EAPI="6"
 GNOME2_LA_PUNT="yes"
-PYTHON_COMPAT=( python{3_9,3_10,3_11} )
+PYTHON_COMPAT=( python{3_10,3_11,3_12,3_13} )
 
 inherit gnome2 meson multilib pax-utils python-r1 systemd
 
@@ -58,7 +58,7 @@ COMMON_DEPEND="
 	x11-apps/mesa-progs
 
 	bluetooth? ( >=net-wireless/gnome-bluetooth-3.9[introspection] )
-	doc? ( >=dev-util/gtk-doc-am-1.17 )
+	doc? ( >=dev-build/gtk-doc-am-1.17 )
 	networkmanager? (
 		app-crypt/libsecret
 		>=gnome-extra/nm-applet-0.9.8
@@ -112,7 +112,7 @@ DEPEND="${COMMON_DEPEND}
 	dev-lang/sassc
 	>=dev-util/gdbus-codegen-2.45.3
 	gnome-base/gnome-common
-	sys-devel/autoconf-archive
+	dev-build/autoconf-archive
 	>=sys-devel/gettext-0.19.6
 	virtual/pkgconfig
 "
@@ -124,7 +124,7 @@ src_prepare() {
 
 	if ! use vanilla-gc; then
 		# From GNOME:
-		# 	https://gitlab.gnome.org/GNOME/gnome-shell/issues/64
+		# 	https://gitlab.gnome.org/GNOME/gnome-shell/-/issues/64
 		eapply "${FILESDIR}"/${PN}-3.14.4-force-garbage-collection.patch
 	fi
 

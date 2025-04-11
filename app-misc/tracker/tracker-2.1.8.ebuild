@@ -1,7 +1,7 @@
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI="6"
-PYTHON_COMPAT=( python{3_9,3_10,3_11} )
+PYTHON_COMPAT=( python{3_10,3_11,3_12,3_13} )
 VALA_MAX_API_VERSION="0.42"
 
 inherit bash-completion-r1 gnome2 linux-info python-any-r1 meson vala
@@ -46,7 +46,7 @@ DEPEND="${RDEPEND}
 	${PYTHON_DEPS}
 	$(vala_depend)
 	dev-util/gdbus-codegen
-	>=dev-util/gtk-doc-am-1.8
+	>=dev-build/gtk-doc-am-1.8
 	>=dev-util/intltool-0.40.0
 	>=sys-devel/gettext-0.17
 	virtual/pkgconfig

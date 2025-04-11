@@ -28,7 +28,7 @@ RDEPEND="
 "
 DEPEND="${RDEPEND}
 	dev-libs/appstream-glib
-	>=dev-util/gtk-doc-am-1.13
+	>=dev-build/gtk-doc-am-1.13
 	>=dev-util/intltool-0.41.0
 	dev-util/itstool
 	>=sys-devel/gettext-0.17

@@ -74,12 +74,12 @@ DEPEND="${COMMON_DEPEND}
 src_prepare() {
 	if use gconf; then
 		# From GNOME:
-		# 	https://gitlab.gnome.org/GNOME/gnome-session/commit/926c3fce17d9665047412046a7298fad55934b2d
+		# 	https://gitlab.gnome.org/GNOME/gnome-session/-/commit/926c3fce17d9665047412046a7298fad55934b2d
 		eapply "${FILESDIR}"/${PN}-3.28.1-support-gconf.patch
 	fi
 
 	# From GNOME:
-	# 	https://gitlab.gnome.org/GNOME/gnome-session/commit/d8b8665dae18700cc4caae5e857b1c23a005a62e
+	# 	https://gitlab.gnome.org/GNOME/gnome-session/-/commit/d8b8665dae18700cc4caae5e857b1c23a005a62e
 	eapply "${FILESDIR}"/${PN}-3.28.1-support-old-upower.patch
 
 	eapply "${FILESDIR}"/${PN}-3.30.1-support-elogind.patch

@@ -43,7 +43,7 @@ DEPEND="${COMMON_DEPEND}
 "
 
 PATCHES=(
-	"${FILESDIR}"/elogind-support.patch # https://gitlab.gnome.org/GNOME/gnome-disk-utility/merge_requests/15
+	"${FILESDIR}"/elogind-support.patch # https://gitlab.gnome.org/GNOME/gnome-disk-utility/-/merge_requests/15
 )
 
 src_configure() {

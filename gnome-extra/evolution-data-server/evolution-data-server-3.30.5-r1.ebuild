@@ -62,7 +62,7 @@ DEPEND="${RDEPEND}
 BDEPEND="
 	dev-util/gdbus-codegen
 	dev-util/gperf
-	>=dev-util/gtk-doc-am-1.14
+	>=dev-build/gtk-doc-am-1.14
 	>=dev-util/intltool-0.35.5
 	>=sys-devel/gettext-0.18.3
 	virtual/pkgconfig
